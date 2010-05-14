@@ -40,6 +40,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
     setLayout(layout_main);
 
     connect(button_connect, SIGNAL(clicked()), this, SLOT(connection()));
+    connect(button_subscribe, SIGNAL(clicked()), this, SLOT(subscribe()));
     connect(this, SIGNAL(notifyConnected(int,int)), parent, SLOT(updateConnected(int, int)));
 }
 
@@ -60,6 +61,11 @@ void LoginWidget::connection(){
     else{
         label_msg->setText("Informations invalides");
     }
+}
+
+void LoginWidget::subscribe(){
+    SubscribeWidget *sw = new SubscribeWidget(this);
+    sw->exec();
 }
 
 /*void LoginWidget::keyPressEvent(QKeyEvent *keyEvent)

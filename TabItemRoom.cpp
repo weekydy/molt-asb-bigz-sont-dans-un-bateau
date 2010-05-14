@@ -64,13 +64,17 @@ void TabItemRoom::deleteItem(){
     if (index.row() != -1){
         int id_room = proxyModel->data(index).toInt();
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("DELETE FROM room WHERE id = :id_room");
+        QSqlQuery *req2 = new QSqlQuery();
+        req->prepare("DELETE FROM haveequipment WHERE id_room = :id_room");
         req->bindValue("id_room", id_room);
+
+        req2->prepare("DELETE FROM room WHERE id = :id_room");
+        req2->bindValue("id_room", id_room);
 
         int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer cette salle ?", QMessageBox::Yes | QMessageBox::No);
         if(rep == QMessageBox::Yes){
 
-            if (req->exec()){
+            if (req->exec() && req2->exec()){
                 refreshList();
                 QMessageBox::information(this, "Requête exécutée avec succès !", "La salle a été supprimé de la base de données !");
             }

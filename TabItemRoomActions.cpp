@@ -9,9 +9,36 @@ TabItemRoomActions::TabItemRoomActions(int _action, QWidget *parent, int _id) : 
     le_room_capacity = new QSpinBox();
     le_room_capacity->setMinimum(1);
 
+    list = new CheckBoxList();
+    list->addItem("Choisissez :", false);
+
+    QSqlQuery *req = new QSqlQuery;
+    //req->prepare("SELECT h.id_room, e.id, e.name FROM equipment e LEFT OUTER JOIN haveequipment h ON h.id_equipment = e.id WHERE id_room = :room_id ORDER BY e.name");
+    //req->bindValue(":id_room", id);
+    req->prepare("SELECT id, name FROM equipment ORDER BY name");
+    req->exec();
+    while(req->next()){
+        int id_equipment = req->value(0).toInt();
+        QSqlQuery *req2 = new QSqlQuery;
+        req2->prepare("SELECT * FROM haveequipment WHERE id_equipment = :id_equipment AND id_room = :id_room");
+        req2->bindValue(":id_equipment", id_equipment);
+        req2->bindValue(":id_room", id);
+        req2->exec();
+
+        if(req2->first())
+            list->addItem(req->value(1).toString(), true);
+        else
+            list->addItem(req->value(1).toString(), false);
+    }
+
+    /*
+    list->addItem("test", false);
+    list->addItem("aha", true);*/
+
     QFormLayout *fl_data = new QFormLayout;
     fl_data->addRow("Nom:", le_room_name);
     fl_data->addRow("Capacité:", le_room_capacity);
+    fl_data->addRow("Equipement(s):", list);
 
     btn_cancel = new QPushButton("&Annuler");
     btn_action = new QPushButton();
@@ -58,7 +85,18 @@ void TabItemRoomActions::makeAction(){
     if(le_room_name->text() == "") missingFields += "Nom ; ";
 
     if (missingFields == ""){ // Si tout a été saisi
+        QMap<QString, bool> map_list;
+        for(int i = 0; i < list->count(); ++i){
+            map_list[list->itemText(i)] = list->itemData(i).toBool();
+            qDebug() << list->itemData(i);
+        }
+
+
         QSqlQuery *req = new QSqlQuery;
+
+
+
+
         req->prepare("SELECT id, name FROM room WHERE name = :name");
         req->bindValue(":name", le_room_name->text());
         req->exec();
@@ -73,9 +111,36 @@ void TabItemRoomActions::makeAction(){
                 req->bindValue(":capacity", (int)le_room_capacity->value());
 
                 if(req->exec()){
+
+                    // on supprime tout les equipements
+                    req->prepare("DELETE FROM haveequipment WHERE id_room = :id_room");
+                    req->bindValue(":id_room", id);
+                    req->exec();
+
+                    // on parcours la liste, et on ajoute les equipements au fur et à mesure
+                    QMapIterator<QString, bool> it(map_list);
+                    while(it.hasNext()){
+                        it.next();
+                        if(it.value()){ // si l'équipement est coché
+                            // on recupere l'id de l'equipement
+                            req->prepare("SELECT id FROM equipment WHERE name = :name");
+                            req->bindValue(":name", it.key());
+                            req->exec();
+                            req->first();
+                            int id_equipment = req->value(0).toInt();
+
+                            // on ajoute l'equipement
+                            req->prepare("INSERT INTO haveequipment VALUES(:id_room, :id_equipment)");
+                            req->bindValue(":id_room", id);
+                            req->bindValue(":id_equipment", id_equipment);
+                            req->exec();
+                        }
+                    }
+
                     emit notifyRefreshList();
                     QMessageBox::information(this, "Requête exécutée avec succès !", "La salle a été modifié dans la base de données !");
                     accept();
+
                 }
                 else{
                     QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
@@ -93,6 +158,36 @@ void TabItemRoomActions::makeAction(){
                 req->bindValue(":capacity", le_room_capacity->value());
 
                 if(req->exec()){
+                    // on met à jour l'id
+                    id = req->lastInsertId().toInt();
+
+
+                    // on supprime tout les equipements
+                    req->prepare("DELETE FROM haveequipment WHERE id_room = :id_room");
+                    req->bindValue(":id_room", id);
+                    req->exec();
+
+                    // on parcours la liste, et on ajoute les equipements au fur et à mesure
+                    QMapIterator<QString, bool> it(map_list);
+                    while(it.hasNext()){
+                        it.next();
+                        if(it.value()){ // si l'équipement est coché
+                            // on recupere l'id de l'equipement
+                            req->prepare("SELECT id FROM equipment WHERE name = :name");
+                            req->bindValue(":name", it.key());
+                            req->exec();
+                            req->first();
+                            int id_equipment = req->value(0).toInt();
+
+                            // on ajoute l'equipement
+                            req->prepare("INSERT INTO haveequipment VALUES(:id_room, :id_equipment)");
+                            req->bindValue(":id_room", id);
+                            req->bindValue(":id_equipment", id_equipment);
+                            req->exec();
+                        }
+                    }
+
+
                     emit notifyRefreshList();
                     QMessageBox::information(this, "Requête exécutée avec succès !", "La salle a été ajouté dans la base de données !");
                     accept();
