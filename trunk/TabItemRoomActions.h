@@ -6,6 +6,7 @@
 #include <QtSql>
 
 #include "Commons.h"
+#include "CheckBoxList.h"
 
 class TabItemRoomActions : public QDialog
 {
@@ -19,6 +20,7 @@ private:
 	
     QLineEdit *le_room_name;
     QSpinBox *le_room_capacity;
+    CheckBoxList *list;
 
     QPushButton *btn_action;
     QPushButton *btn_cancel;

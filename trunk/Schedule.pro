@@ -13,7 +13,9 @@ SOURCES += main.cpp \
     DbAccess.cpp \
     TabItemWidget.cpp \
     TabItemRoom.cpp \
-    TabItemRoomActions.cpp
+    TabItemRoomActions.cpp \
+    SubscribeWidget.cpp \
+    CheckBoxList.cpp
 HEADERS += TabWidget.h \
     MainWindow.h \
     LoginWidget.h \
@@ -21,4 +23,6 @@ HEADERS += TabWidget.h \
     Commons.h \
     TabItemWidget.h \
     TabItemRoom.h \
-    TabItemRoomActions.h
+    TabItemRoomActions.h \
+    SubscribeWidget.h \
+    CheckBoxList.h

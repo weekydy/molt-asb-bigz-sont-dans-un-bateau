@@ -6,6 +6,8 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 
+#include "SubscribeWidget.h"
+
 class LoginWidget : public QWidget
 {
 Q_OBJECT
@@ -24,6 +26,7 @@ private:
 
 private slots:
     void connection();
+    void subscribe();
 
 signals:
     void notifyConnected(int user_id, int access);
