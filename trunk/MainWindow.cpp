@@ -86,8 +86,9 @@ void MainWindow::createWidgets(){
         else if(access == ONLINE_ROOT){
             myStatusBar->showMessage("Connecté (Admin)");
             tabWidget->addTab(new TabItemWidget(), "Administration");
-            tabWidget->addTab(new TabItemUser(), "Utilisateur");
+            tabWidget->addTab(new TabItemUser(), "Utilisateurs");
             tabWidget->addTab(new TabItemRoom(), "Salles");
+            tabWidget->addTab(new TabItemEquipment(), "Equipements");
         }
 
         QVBoxLayout *layout_central = new QVBoxLayout();
