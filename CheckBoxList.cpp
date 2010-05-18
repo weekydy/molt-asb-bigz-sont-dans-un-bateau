@@ -7,7 +7,7 @@ class CheckBoxListDelegate : public QItemDelegate
 public:
     CheckBoxListDelegate(QObject *parent = 0) : QItemDelegate(parent){}
 
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
     {
      QCheckBox *editor = new QCheckBox(parent);
 
@@ -87,7 +87,7 @@ public:
  {
      editor->setGeometry(option.rect);
  }
-
+};
 /*
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
     {
@@ -131,7 +131,7 @@ public:
         myEditor->setChecked(index.data(Qt::UserRole).toBool());
     }
 */
-};
+
 
 
 

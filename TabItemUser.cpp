@@ -6,7 +6,7 @@ class CheckBoxDelegate : public QItemDelegate
 private:
     int checkboxCol; // index de la colonne ayant la checkbox
 public:
-    CheckBoxDelegate::CheckBoxDelegate(QObject *parent): QItemDelegate(parent), checkboxCol(5){}
+    CheckBoxDelegate(QObject *parent): QItemDelegate(parent), checkboxCol(5){}
 
     QWidget *CheckBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const{
         if(index.isValid() && index.column() == checkboxCol){
@@ -19,7 +19,7 @@ public:
         }
     }
 
-    void CheckBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const{
+    void setEditorData(QWidget *editor, const QModelIndex &index) const{
         if(index.isValid() && index.column() == checkboxCol){
             int value = index.model()->data(index, Qt::DisplayRole).toInt();
 
@@ -34,7 +34,7 @@ public:
         }
     }
 
-    void CheckBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const{
+    void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const{
         if(index.isValid() && index.column() == checkboxCol){
             QCheckBox *checkBox = static_cast<QCheckBox*>(editor);
             int value;
@@ -50,7 +50,7 @@ public:
         }
     }
 
-    void CheckBoxDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const{
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const{
         if(index.isValid() && index.column() == checkboxCol)
             editor->setGeometry(option.rect);
         else
