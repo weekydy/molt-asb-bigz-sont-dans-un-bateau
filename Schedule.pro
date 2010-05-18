@@ -16,7 +16,9 @@ SOURCES += main.cpp \
     TabItemRoomActions.cpp \
     SubscribeWidget.cpp \
     CheckBoxList.cpp \
-    TabItemUser.cpp
+    TabItemUser.cpp \
+    TabItemEquipment.cpp \
+    TabItemEquipmentActions.cpp
 HEADERS += TabWidget.h \
     MainWindow.h \
     LoginWidget.h \
@@ -27,4 +29,6 @@ HEADERS += TabWidget.h \
     TabItemRoomActions.h \
     SubscribeWidget.h \
     CheckBoxList.h \
-    TabItemUser.h
+    TabItemUser.h \
+    TabItemEquipment.h \
+    TabItemEquipmentActions.h

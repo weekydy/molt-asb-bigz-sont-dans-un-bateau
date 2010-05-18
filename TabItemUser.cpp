@@ -230,37 +230,38 @@ void TabItemUser::refreshList(){
 }
 
 void TabItemUser::createMenu(QPoint pos){
-    qDebug() << "la";
     QMenu *menu = new QMenu(this);
-/*
-    int index = view->item(view->currentRow(), 0)->text().toInt();
-    qDebug() << index;
-    if (index > 0){        
+
+    QModelIndex index = view->selectionModel()->currentIndex();
+    index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
+    if (index.row() != -1){
+
         QAction *action_del = new QAction("&Supprimer", this);
         menu->addAction(action_del);
 
         connect(action_del, SIGNAL(triggered()), this, SLOT(deleteItem()));
     }
 
-    menu->exec(table->mapToGlobal(pos));*/
+    menu->exec(view->mapToGlobal(pos));
 }
 
 void TabItemUser::deleteItem(){
-   /* int index = table->item(table->currentRow(), 0)->text().toInt();
-    if (index > 0){
-        int id_user = index;
+    QModelIndex index = view->selectionModel()->currentIndex();
+    index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
+    if (index.row() != -1){
+        int id_user = proxyModel->data(index).toInt();
         QSqlQuery *req = new QSqlQuery();
         req->prepare("DELETE FROM user WHERE id = :id_user");
         req->bindValue("id_user", id_user);
 
-        int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer cette personne ?", QMessageBox::Yes | QMessageBox::No);
+        int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer cet utilisateur ?", QMessageBox::Yes | QMessageBox::No);
         if(rep == QMessageBox::Yes){
             if (req->exec()){
                 refreshList();
                 QMessageBox::information(this, "Requête exécutée avec succès !", "La salle a été supprimé de la base de données !");
             }
             else
-                QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée ! \nDes réunions peut-être rattachées à cette salle ...");
+                QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
         }
-    }*/
+    }
 }
