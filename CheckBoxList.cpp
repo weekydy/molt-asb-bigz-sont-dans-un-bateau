@@ -7,14 +7,14 @@ class CheckBoxListDelegate : public QItemDelegate
 public:
     CheckBoxListDelegate(QObject *parent = 0) : QItemDelegate(parent){}
 
-    QWidget *CheckBoxListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &/* option */, const QModelIndex &/* index */) const
     {
      QCheckBox *editor = new QCheckBox(parent);
 
      return editor;
     }
 
-     void CheckBoxListDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+     void setEditorData(QWidget *editor, const QModelIndex &index) const
  {
 
      QCheckBox *checkBox = static_cast<QCheckBox*>(editor);
@@ -36,7 +36,7 @@ public:
 
 }*/
 
-  void CheckBoxListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
+  void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
  {
      QCheckBox *checkBox = static_cast<QCheckBox*>(editor);
      //spinBox->interpretText();
@@ -83,7 +83,7 @@ public:
   */
 
 
- void CheckBoxListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+ void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
  {
      editor->setGeometry(option.rect);
  }

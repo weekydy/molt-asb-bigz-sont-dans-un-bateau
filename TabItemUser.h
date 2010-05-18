@@ -14,7 +14,8 @@ public:
     TabItemUser(QWidget *parent = 0);
 
 private:
-    QStandardItemModel *model;
+    //QStandardItemModel *model;
+    QSqlQueryModel *model;
     QTableView *view;
     QSortFilterProxyModel *proxyModel;
 
