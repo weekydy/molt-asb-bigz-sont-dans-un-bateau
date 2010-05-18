@@ -1,7 +1,79 @@
 #include "TabItemUser.h"
 
+// internal private delegate
+class CheckBoxDelegate : public QItemDelegate
+{
+private:
+    int checkboxCol; // index de la colonne ayant la checkbox
+public:
+    CheckBoxDelegate::CheckBoxDelegate(QObject *parent): QItemDelegate(parent), checkboxCol(5){}
+
+    QWidget *CheckBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const{
+        if(index.isValid() && index.column() == checkboxCol){
+            QCheckBox *editor = new QCheckBox(parent);
+            editor->installEventFilter(const_cast<CheckBoxDelegate*>(this));
+            return editor;
+        }
+        else{
+            return QItemDelegate::createEditor(parent, option, index);
+        }
+    }
+
+    void CheckBoxDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const{
+        if(index.isValid() && index.column() == checkboxCol){
+            int value = index.model()->data(index, Qt::DisplayRole).toInt();
+
+            QCheckBox *checkBox = static_cast<QCheckBox*>(editor);
+            if(value == 2) // 2 = droit administrateur dans la DB
+                checkBox->setCheckState(Qt::Checked);
+            else
+                checkBox->setCheckState(Qt::Unchecked);
+            }
+        else{
+            QItemDelegate::setEditorData(editor, index);
+        }
+    }
+
+    void CheckBoxDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const{
+        if(index.isValid() && index.column() == checkboxCol){
+            QCheckBox *checkBox = static_cast<QCheckBox*>(editor);
+            int value;
+            if(checkBox->checkState() == Qt::Checked)
+                value = 2;
+            else
+                value = 1;
+
+            model->setData(index, value);
+        }
+        else{
+            QItemDelegate::setModelData(editor, model, index);
+        }
+    }
+
+    void CheckBoxDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const{
+        if(index.isValid() && index.column() == checkboxCol)
+            editor->setGeometry(option.rect);
+        else
+            QItemDelegate::updateEditorGeometry(editor, option, index);
+    }
+};
+
 TabItemUser::TabItemUser(QWidget *parent) : QWidget(parent)
 {
+    model = new QSqlQueryModel();
+
+    view = new QTableView();
+    view->setEditTriggers(QAbstractItemView::CurrentChanged);
+    view->setDragEnabled(true);
+    view->verticalHeader()->hide();
+    view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    view->setSelectionMode(QAbstractItemView::SingleSelection);
+    view->setAlternatingRowColors(true);
+    view->setSortingEnabled (true);
+    view->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    proxyModel = new QSortFilterProxyModel();
+/*
     model = new QStandardItemModel();
 
     view = new QTableView();
@@ -14,7 +86,7 @@ TabItemUser::TabItemUser(QWidget *parent) : QWidget(parent)
     view->setContextMenuPolicy(Qt::CustomContextMenu);
 
     proxyModel = new QSortFilterProxyModel();
-/*
+----
     table = new QTableWidget(0,5,this);
     table->verticalHeader()->hide();
     table->hideColumn(0); // On cache la clé
@@ -24,6 +96,7 @@ TabItemUser::TabItemUser(QWidget *parent) : QWidget(parent)
     table->setSelectionMode(QAbstractItemView::SingleSelection);
     table->setContextMenuPolicy(Qt::CustomContextMenu);
 */
+
     refreshList();
 
     QVBoxLayout *layout_main = new QVBoxLayout();
@@ -36,6 +109,22 @@ TabItemUser::TabItemUser(QWidget *parent) : QWidget(parent)
 }
 
 void TabItemUser::refreshList(){
+
+    model->setQuery("SELECT * FROM user ORDER BY surname, name");
+    model->setHeaderData(1, Qt::Horizontal, "Nom");
+    model->setHeaderData(2, Qt::Horizontal, "Prénom");
+    model->setHeaderData(3, Qt::Horizontal, "Identifiant");
+    model->setHeaderData(5, Qt::Horizontal, "Admin");
+
+    proxyModel->setSourceModel(model);
+
+    view->setModel(proxyModel);
+    CheckBoxDelegate *delegate = new CheckBoxDelegate(this);
+    view->setItemDelegate(delegate);
+    view->hideColumn(0); // id
+    view->hideColumn(4); // mot de passe
+
+
     /*table->clear();
     table->setRowCount(0);
 
@@ -85,7 +174,7 @@ void TabItemUser::refreshList(){
         i++;
     }*/
 
-
+/*
     model->setHeaderData(1, Qt::Horizontal, "Nom");
     model->setHeaderData(2, Qt::Horizontal, "Prénom");
     model->setHeaderData(3, Qt::Horizontal, "Identifiant");
@@ -136,6 +225,8 @@ void TabItemUser::refreshList(){
 
     view->setModel(proxyModel);
     //view->hideColumn(0);
+
+*/
 }
 
 void TabItemUser::createMenu(QPoint pos){
