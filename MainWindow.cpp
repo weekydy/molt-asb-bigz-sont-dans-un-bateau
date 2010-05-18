@@ -86,6 +86,7 @@ void MainWindow::createWidgets(){
         else if(access == ONLINE_ROOT){
             myStatusBar->showMessage("Connecté (Admin)");
             tabWidget->addTab(new TabItemWidget(), "Administration");
+            tabWidget->addTab(new TabItemUser(), "Utilisateur");
             tabWidget->addTab(new TabItemRoom(), "Salles");
         }
 
