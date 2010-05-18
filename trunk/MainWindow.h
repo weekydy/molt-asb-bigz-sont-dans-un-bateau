@@ -11,6 +11,7 @@
 #include "TabWidget.h"
 #include "TabItemWidget.h"
 #include "TabItemRoom.h"
+#include "TabItemUser.h"
 
 
 using namespace std;
