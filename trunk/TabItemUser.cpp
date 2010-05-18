@@ -8,7 +8,7 @@ private:
 public:
     CheckBoxDelegate(QObject *parent): QItemDelegate(parent), checkboxCol(5){}
 
-    QWidget *CheckBoxDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const{
+    QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const{
         if(index.isValid() && index.column() == checkboxCol){
             QCheckBox *editor = new QCheckBox(parent);
             editor->installEventFilter(const_cast<CheckBoxDelegate*>(this));
