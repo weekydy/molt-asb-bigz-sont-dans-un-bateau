@@ -77,7 +77,7 @@ void MainWindow::createWidgets(){
         layout_top->addWidget(button_logout);
 
         TabWidget *tabWidget = new TabWidget(this);
-        tabWidget->addTab(new TabItemWidget(), "Planning");
+        tabWidget->addTab(new TabItemPlanning(), "Planning");
 
         if(access == ONLINE_USER){
             myStatusBar->showMessage("Connecté");
