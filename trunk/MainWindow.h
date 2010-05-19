@@ -13,6 +13,7 @@
 #include "TabItemRoom.h"
 #include "TabItemUser.h"
 #include "TabItemEquipment.h"
+#include "TabItemPlanning.h"
 
 
 using namespace std;
