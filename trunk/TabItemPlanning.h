@@ -11,10 +11,17 @@ class TabItemPlanning : public QWidget
 {
 Q_OBJECT
 public:
-    TabItemPlanning(QWidget *parent = 0);
+    TabItemPlanning(int _user_id, QWidget *parent = 0);
 
 private:
-    QTableWidget *table;
+    int user_id;
+    QStandardItemModel *model;
+    QTableView *view;
+    QCalendarWidget *calendar;
+    QComboBox *cb_view;
+    QPushButton *btn_add;
+    QStringList hours;
+    QList<QColor> *colours;
 
 private slots:
     void createMenu(QPoint pos);
@@ -22,6 +29,8 @@ private slots:
     void editItem();
     void addItem();
     void refreshList();
+    void displayInfo();
+    //void resizeEvent(QResizeEvent * event);
 
 };
 

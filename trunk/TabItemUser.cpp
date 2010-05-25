@@ -110,7 +110,7 @@ TabItemUser::TabItemUser(QWidget *parent) : QWidget(parent)
 
 void TabItemUser::refreshList(){
 
-    model->setQuery("SELECT * FROM user ORDER BY surname, name");
+    model->setQuery("SELECT * FROM user ORDER BY user_surname, user_name");
     model->setHeaderData(1, Qt::Horizontal, "Nom");
     model->setHeaderData(2, Qt::Horizontal, "Prénom");
     model->setHeaderData(3, Qt::Horizontal, "Identifiant");
@@ -251,7 +251,7 @@ void TabItemUser::deleteItem(){
     if (index.row() != -1){
         int id_user = proxyModel->data(index).toInt();
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("DELETE FROM user WHERE id = :id_user");
+        req->prepare("DELETE FROM user WHERE user_id = :id_user");
         req->bindValue("id_user", id_user);
 
         int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer cet utilisateur ?", QMessageBox::Yes | QMessageBox::No);

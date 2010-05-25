@@ -57,14 +57,14 @@ void SubscribeWidget::subscribe(){
         if(le_password->text() == le_password_bis->text()){
 
             QSqlQuery *req = new QSqlQuery;
-            req->prepare("SELECT name, surname FROM user WHERE name = :name AND surname = :surname");
+            req->prepare("SELECT user_name, user_surname FROM user WHERE user_name = :name AND user_surname = :surname");
             req->bindValue(":surname", le_surname->text());
             req->bindValue(":name", le_name->text());
             req->exec();
 
             // si il n'y a pas d'entrée similaire
             if(!req->next()){
-                req->prepare("INSERT INTO user(name, surname, nickname, password, access) VALUES (:name, :surname, :nickname, :password, :access)");
+                req->prepare("INSERT INTO user(user_name, user_surname, user_nickname, user_password, user_access) VALUES (:name, :surname, :nickname, :password, :access)");
                 req->bindValue(":name", le_name->text());
                 req->bindValue(":surname", le_surname->text());
                 req->bindValue(":nickname", le_nickname->text());

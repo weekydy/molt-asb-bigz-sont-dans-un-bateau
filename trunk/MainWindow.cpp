@@ -7,7 +7,7 @@ MainWindow::MainWindow()
     access = OFFLINE;
 
     setWindowTitle("Gestionnaire d'emploi du temps");
-    setFixedSize(1000, 700);
+    setMinimumSize(800, 600);
 
     QDesktopWidget desktop;
     QRect dim = desktop.screenGeometry();
@@ -61,7 +61,7 @@ void MainWindow::connectionDB(){
 void MainWindow::createWidgets(){
     if(access > OFFLINE){
         QSqlQuery req;
-        req.prepare("SELECT name, surname FROM user WHERE id = :user_id");
+        req.prepare("SELECT user_name, user_surname FROM user WHERE user_id = :user_id");
         req.bindValue(":user_id", user_id);
         req.exec();
         req.first();
@@ -77,7 +77,7 @@ void MainWindow::createWidgets(){
         layout_top->addWidget(button_logout);
 
         TabWidget *tabWidget = new TabWidget(this);
-        tabWidget->addTab(new TabItemPlanning(), "Planning");
+        tabWidget->addTab(new TabItemPlanning(user_id), "Planning");
 
         if(access == ONLINE_USER){
             myStatusBar->showMessage("Connecté");

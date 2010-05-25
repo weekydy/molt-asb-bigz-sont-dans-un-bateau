@@ -46,7 +46,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
 
 void LoginWidget::connection(){
     QSqlQuery req;
-    req.prepare("SELECT * FROM user WHERE nickname = :nickname AND password = :pass");
+    req.prepare("SELECT * FROM user WHERE user_nickname = :nickname AND user_password = :pass");
     req.bindValue(":nickname", le_id->text());
     req.bindValue(":pass", le_pass->text());
     req.exec();
@@ -54,8 +54,8 @@ void LoginWidget::connection(){
 
     if(req.first()){
         label_msg->setText("Informations valides");
-        int id_user = req.value(rec.indexOf("id")).toInt();
-        int access = req.value(rec.indexOf("access")).toInt();
+        int id_user = req.value(rec.indexOf("user_id")).toInt();
+        int access = req.value(rec.indexOf("user_access")).toInt();
         emit notifyConnected(id_user, access);
     }
     else{

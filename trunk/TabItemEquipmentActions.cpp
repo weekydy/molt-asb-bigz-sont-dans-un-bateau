@@ -38,13 +38,13 @@ void TabItemEquipmentActions::makeAction(){
 
         QSqlQuery *req = new QSqlQuery;
 
-        req->prepare("SELECT name FROM equipment WHERE name = :name");
+        req->prepare("SELECT equip_name FROM equipment WHERE equip_name = :name");
         req->bindValue(":name", le_equip_name->text());
         req->exec();
 
         // si il n'y a pas d'entrée similaire
         if(!req->next()){
-            req->prepare("INSERT INTO equipment(name) VALUES (:name)");
+            req->prepare("INSERT INTO equipment(equip_name) VALUES (:name)");
             req->bindValue(":name", le_equip_name->text());
 
             if(req->exec()){
