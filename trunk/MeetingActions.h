@@ -20,7 +20,7 @@ private:
     
     QLineEdit *le_label;
     QDateTimeEdit *dt_begin;
-    QTimeEdit *te_duration;
+    QDateTimeEdit *dt_end;
 
     CheckBoxList *list_users;
 
