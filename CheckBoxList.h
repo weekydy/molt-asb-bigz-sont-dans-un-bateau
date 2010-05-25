@@ -16,7 +16,7 @@ public:
     //QString getDisplayText() const;
 
 private:
-	QString m_DisplayText;
+    QString m_DisplayText;
 };
 
 #endif // CHECKBOXLIST_H
