@@ -6,6 +6,7 @@
 #include <QtSql>
 
 #include "Commons.h"
+#include "MeetingActions.h"
 
 class TabItemPlanning : public QWidget
 {
@@ -30,6 +31,7 @@ private slots:
     void addItem();
     void refreshList();
     void displayInfo();
+    void addMeeting();
     //void resizeEvent(QResizeEvent * event);
 
 };

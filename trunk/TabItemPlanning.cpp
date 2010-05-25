@@ -85,6 +85,7 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
     connect(calendar, SIGNAL(clicked(QDate)), this, SLOT(refreshList()));
     connect(calendar, SIGNAL(currentPageChanged(int,int)), this, SLOT(refreshList()));
     connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(displayInfo()));
+    connect(btn_add, SIGNAL(clicked()), this, SLOT(addMeeting()));
 
 
 }
@@ -392,4 +393,7 @@ void TabItemPlanning::resizeEvent(QResizeEvent * event)
                 view->setColumnWidth(i, largeur);
 }*/
 
-
+void TabItemPlanning::addMeeting(){
+    MeetingActions *meeting = new MeetingActions(ADD, this);
+    meeting->exec();
+}
