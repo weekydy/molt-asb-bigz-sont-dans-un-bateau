@@ -13,14 +13,14 @@ TabItemRoomActions::TabItemRoomActions(int _action, QWidget *parent, int _id) : 
     list->addItem("Choisissez :", false);
 
     QSqlQuery *req = new QSqlQuery;
-    //req->prepare("SELECT h.id_room, e.id, e.name FROM equipment e LEFT OUTER JOIN haveequipment h ON h.id_equipment = e.id WHERE id_room = :room_id ORDER BY e.name");
+    //req->prepare("SELECT he.room_id, e.equip_id, e.equip_name FROM equipment e LEFT OUTER JOIN haveequipment he ON h.equip_id = e.equip_id WHERE he.room_id = :room_id ORDER BY e.equip_name");
     //req->bindValue(":id_room", id);
-    req->prepare("SELECT id, name FROM equipment ORDER BY name");
+    req->prepare("SELECT equip_id, equip_name FROM equipment ORDER BY equip_name");
     req->exec();
     while(req->next()){
         int id_equipment = req->value(0).toInt();
         QSqlQuery *req2 = new QSqlQuery;
-        req2->prepare("SELECT * FROM haveequipment WHERE id_equipment = :id_equipment AND id_room = :id_room");
+        req2->prepare("SELECT * FROM haveequipment WHERE equip_id = :id_equipment AND room_id = :id_room");
         req2->bindValue(":id_equipment", id_equipment);
         req2->bindValue(":id_room", id);
         req2->exec();
@@ -52,15 +52,15 @@ TabItemRoomActions::TabItemRoomActions(int _action, QWidget *parent, int _id) : 
         btn_action->setText("&Enregistrer !");
 
         QSqlQuery req;
-        req.prepare("SELECT * FROM room WHERE id = :id_room");
+        req.prepare("SELECT * FROM room WHERE room_id = :id_room");
         req.bindValue("id_room", id);
         req.exec();
 
         QSqlRecord rec = req.record();
 
         if(req.first()){
-            le_room_name->setText(req.value(rec.indexOf("name")).toString());
-            le_room_capacity->setValue(req.value(rec.indexOf("capacity")).toInt());
+            le_room_name->setText(req.value(rec.indexOf("room_name")).toString());
+            le_room_capacity->setValue(req.value(rec.indexOf("room_capacity")).toInt());
         }
     }
 
@@ -97,7 +97,7 @@ void TabItemRoomActions::makeAction(){
 
 
 
-        req->prepare("SELECT id, name FROM room WHERE name = :name");
+        req->prepare("SELECT room_id, room_name FROM room WHERE room_name = :name");
         req->bindValue(":name", le_room_name->text());
         req->exec();
 
@@ -105,7 +105,7 @@ void TabItemRoomActions::makeAction(){
             // si il n'y a pas d'entrée similaire, ou si on modifie notre propre occurence
             if(!req->next() || req->value(0).toInt() == id){
 
-                req->prepare("UPDATE room SET name = :name, capacity = :capacity WHERE id = :id");
+                req->prepare("UPDATE room SET room_name = :name, room_capacity = :capacity WHERE room_id = :id");
                 req->bindValue(":id", id);
                 req->bindValue(":name", le_room_name->text());
                 req->bindValue(":capacity", (int)le_room_capacity->value());
@@ -113,7 +113,7 @@ void TabItemRoomActions::makeAction(){
                 if(req->exec()){
 
                     // on supprime tout les equipements
-                    req->prepare("DELETE FROM haveequipment WHERE id_room = :id_room");
+                    req->prepare("DELETE FROM haveequipment WHERE room_id = :id_room");
                     req->bindValue(":id_room", id);
                     req->exec();
 
@@ -123,7 +123,7 @@ void TabItemRoomActions::makeAction(){
                         it.next();
                         if(it.value()){ // si l'équipement est coché
                             // on recupere l'id de l'equipement
-                            req->prepare("SELECT id FROM equipment WHERE name = :name");
+                            req->prepare("SELECT equip_id FROM equipment WHERE equip_name = :name");
                             req->bindValue(":name", it.key());
                             req->exec();
                             req->first();
@@ -153,7 +153,7 @@ void TabItemRoomActions::makeAction(){
         else if(action == ADD){
             // si il n'y a pas d'entrée similaire
             if(!req->next()){
-                req->prepare("INSERT INTO room(name, capacity) VALUES (:name, :capacity)");
+                req->prepare("INSERT INTO room(room_name, room_capacity) VALUES (:name, :capacity)");
                 req->bindValue(":name", le_room_name->text());
                 req->bindValue(":capacity", le_room_capacity->value());
 
@@ -163,7 +163,7 @@ void TabItemRoomActions::makeAction(){
 
 
                     // on supprime tout les equipements
-                    req->prepare("DELETE FROM haveequipment WHERE id_room = :id_room");
+                    req->prepare("DELETE FROM haveequipment WHERE room_id = :id_room");
                     req->bindValue(":id_room", id);
                     req->exec();
 
@@ -173,7 +173,7 @@ void TabItemRoomActions::makeAction(){
                         it.next();
                         if(it.value()){ // si l'équipement est coché
                             // on recupere l'id de l'equipement
-                            req->prepare("SELECT id FROM equipment WHERE name = :name");
+                            req->prepare("SELECT equip_id FROM equipment WHERE equip_name = :name");
                             req->bindValue(":name", it.key());
                             req->exec();
                             req->first();

@@ -29,7 +29,7 @@ TabItemEquipment::TabItemEquipment(QWidget *parent) : QWidget(parent)
 
 void TabItemEquipment::refreshList(){
 
-    model->setQuery("SELECT * FROM equipment ORDER BY name");
+    model->setQuery("SELECT * FROM equipment ORDER BY equip_name");
     model->setHeaderData(1, Qt::Horizontal, "Désignation");
 
     proxyModel->setSourceModel(model);
@@ -63,7 +63,7 @@ void TabItemEquipment::deleteItem(){
     if (index.row() != -1){
         int id_equip = proxyModel->data(index).toInt();
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("DELETE FROM equipment WHERE id = :id_equip");
+        req->prepare("DELETE FROM equipment WHERE equip_id = :id_equip");
         req->bindValue("id_equip", id_equip);
 
         int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer cet équipement ?", QMessageBox::Yes | QMessageBox::No);

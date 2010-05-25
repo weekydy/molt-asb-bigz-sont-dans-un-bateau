@@ -8,9 +8,9 @@ DROP TABLE IF EXISTS equipment;
 DROP TABLE IF EXISTS room;
 
 CREATE TABLE room(
-	id integer PRIMARY KEY AUTOINCREMENT,
-	name varchar,
-	capacity integer
+	room_id integer PRIMARY KEY AUTOINCREMENT,
+	room_name varchar,
+	room_capacity integer
 );
 
 INSERT INTO room VALUES(null, 'A200', '10');
@@ -20,8 +20,8 @@ INSERT INTO room VALUES(null, 'I102', '30');
 
 
 CREATE TABLE equipment(
-	id integer PRIMARY KEY AUTOINCREMENT,
-	name varchar
+	equip_id integer PRIMARY KEY AUTOINCREMENT,
+	equip_name varchar
 );
 
 INSERT INTO equipment VALUES(null, 'TV');
@@ -35,21 +35,23 @@ INSERT INTO equipment VALUES(null, 'Cafetière');
 
 
 CREATE TABLE meeting(
-	id integer PRIMARY KEY AUTOINCREMENT,
-	id_room integer,
-	start date,
-	end date,
-	FOREIGN KEY('id_room') REFERENCES 'room' ('id')
+	meeting_id integer PRIMARY KEY AUTOINCREMENT,
+	room_id integer,
+	meeting_begin datetime,
+	meeting_end datetime,
+	meeting_label varchar,
+	FOREIGN KEY('room_id') REFERENCES 'room' ('room_id')
 );
 
+INSERT INTO meeting VALUES(null, 2, '2010-05-20 08:45', '2010-05-21 11:30', 'Retraite de Jean-Paul');
 
 CREATE TABLE user(
-	id integer PRIMARY KEY AUTOINCREMENT,
-	name varchar,
-	surname varchar,
-	nickname varchar,
-	password varchar,
-	access integer NOT NULL DEFAULT 1
+	user_id integer PRIMARY KEY AUTOINCREMENT,
+	user_name varchar,
+	user_surname varchar,
+	user_nickname varchar,
+	user_password varchar,
+	user_access integer NOT NULL DEFAULT 1
 );
 
 INSERT INTO user VALUES(null, 'Bastien', 'CRAMILLET', 'bcramill', 'bigz', '1');
@@ -58,11 +60,11 @@ INSERT INTO user VALUES(null, 'Jérémy', 'MALTIS', 'jmaltis', 'moltes', '1');
 
 
 CREATE TABLE haveequipment(
-	id_room integer,
-	id_equipment integer,
-	PRIMARY KEY ('id_room', 'id_equipment'),
-	FOREIGN KEY ('id_equipment') REFERENCES 'equipment' ('id'),
-	FOREIGN KEY ('id_room') REFERENCES 'room' ('id')
+	room_id integer,
+	equip_id integer,
+	PRIMARY KEY ('room_id', 'equip_id'),
+	FOREIGN KEY ('equip_id') REFERENCES 'equipment' ('equip_id'),
+	FOREIGN KEY ('room_id') REFERENCES 'room' ('room_id')
 );
 
 INSERT INTO haveequipment VALUES('1', '2');
@@ -79,9 +81,12 @@ INSERT INTO haveequipment VALUES('4', '7');
 INSERT INTO haveequipment VALUES('4', '8');
 
 CREATE TABLE havemeeting(
-	id_meeting integer,
-	id_user integer,
-	PRIMARY KEY('id_meeting', 'id_user'),
-	FOREIGN KEY('id_meeting') REFERENCES 'meeting' ('id'),
-	FOREIGN KEY('id_user') REFERENCES 'user' ('id')
+	meeting_id integer,
+	user_id integer,
+	PRIMARY KEY('meeting_id', 'user_id'),
+	FOREIGN KEY('meeting_id') REFERENCES 'meeting' ('meeting_id'),
+	FOREIGN KEY('user_id') REFERENCES 'user' ('user_id')
 );
+
+INSERT INTO havemeeting VALUES('1', '1');
+INSERT INTO havemeeting VALUES('1', '2');

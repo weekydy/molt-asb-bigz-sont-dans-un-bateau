@@ -27,7 +27,7 @@ TabItemRoom::TabItemRoom(QWidget *parent) : QWidget(parent)
 }
 
 void TabItemRoom::refreshList(){
-    model->setQuery("SELECT * FROM room ORDER BY name");
+    model->setQuery("SELECT * FROM room ORDER BY room_name");
     model->setHeaderData(1, Qt::Horizontal, "Nom");
     model->setHeaderData(2, Qt::Horizontal, "Capacité");
 
@@ -65,10 +65,10 @@ void TabItemRoom::deleteItem(){
         int id_room = proxyModel->data(index).toInt();
         QSqlQuery *req = new QSqlQuery();
         QSqlQuery *req2 = new QSqlQuery();
-        req->prepare("DELETE FROM haveequipment WHERE id_room = :id_room");
+        req->prepare("DELETE FROM haveequipment WHERE room_id = :id_room");
         req->bindValue("id_room", id_room);
 
-        req2->prepare("DELETE FROM room WHERE id = :id_room");
+        req2->prepare("DELETE FROM room WHERE room_id = :id_room");
         req2->bindValue("id_room", id_room);
 
         int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer cette salle ?", QMessageBox::Yes | QMessageBox::No);
