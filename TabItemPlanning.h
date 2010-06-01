@@ -7,6 +7,7 @@
 
 #include "Commons.h"
 #include "MeetingActions.h"
+#include "MeetingDetails.h"
 
 class TabItemPlanning : public QWidget
 {

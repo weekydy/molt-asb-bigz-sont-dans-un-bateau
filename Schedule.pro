@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     TabItemEquipment.cpp \
     TabItemEquipmentActions.cpp \
     TabItemPlanning.cpp \
-    MeetingActions.cpp
+    MeetingActions.cpp \
+    MeetingDetails.cpp
 HEADERS += TabWidget.h \
     MainWindow.h \
     LoginWidget.h \
@@ -35,4 +36,5 @@ HEADERS += TabWidget.h \
     TabItemEquipment.h \
     TabItemEquipmentActions.h \
     TabItemPlanning.h \
-    MeetingActions.h
+    MeetingActions.h \
+    MeetingDetails.h
