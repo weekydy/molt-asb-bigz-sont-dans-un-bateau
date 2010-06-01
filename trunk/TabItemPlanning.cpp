@@ -21,8 +21,6 @@ Q_DECLARE_METATYPE(Meeting)
 //qRegisterMetaType<Meeting>("Meeting");
 
 
-
-
 TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent)
 {
     user_id = _user_id;
@@ -309,8 +307,9 @@ void TabItemPlanning::displayInfo(){
     QModelIndex index = view->selectionModel()->currentIndex();
     if(index.isValid()){
         Meeting m = model->item(index.row(), index.column())->data().value<Meeting>();
-        //qDebug() << m;
-        qDebug() << m.id() << m.pos() << m.size();
+        MeetingDetails *meeting_details = new MeetingDetails(m.id());
+        connect(meeting_details, SIGNAL(notifyRefreshList()), this, SLOT(refreshList()));
+        meeting_details->exec();
     }
 }
 
