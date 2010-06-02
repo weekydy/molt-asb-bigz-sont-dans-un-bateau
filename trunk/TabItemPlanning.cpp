@@ -145,7 +145,7 @@ void TabItemPlanning::refreshList(){
             QStringList time_e = datetime_e.split(" ").at(1).split(":");
 
             int noRow_b = (time_b.at(0).toInt() - 8) * 4 + time_b.at(1).toInt() / 15; // numéro de la ligne où le RV commence
-            int noRow_e = ((time_e.at(0).toInt() - 8) * 4 + time_e.at(1).toInt() / 15) - 1; // numéro de la ligne où le RV termine
+            int noRow_e = ((time_e.at(0).toInt() - 8) * 4 + time_e.at(1).toInt() / 15) - 1; // numéro de la ligne où le RV termine, -1 : [8h00 - 10h30] => 10h30 - 10h45 non compris
 
             int duration = noRow_e - noRow_b + 1; // +1 car l'indice des lignes commence à 0
 
@@ -263,7 +263,8 @@ void TabItemPlanning::refreshList(){
         int nbDaysInMonth = date.daysInMonth();
         int i = 1;
         int nbDaysUseless = 0;
-        while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless){ // on parcours le mois
+        bool lastSunday = false; // pour afficher le dernier dimanche
+        while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless || lastSunday){ // on parcours le mois
             qDebug() << date.dayOfWeek() << " " << i << " " << nbDaysInMonth + nbDaysUseless;
             if(date.month() != date_backup.month()){ nbDaysUseless++; }
             qDebug() << date.toString("yyyy-MM-dd");
@@ -293,10 +294,18 @@ void TabItemPlanning::refreshList(){
             QStandardItem *item = new QStandardItem();
             item->setText(data);
 
-            model->setItem((i / 7), noCol, item);
+            model->setItem(((i - 1) / 7), noCol, item);
 
+            qDebug() << "jour : " << date.toString("dd-MM-yyyy");
             date = date.addDays(1);
             i++;
+
+            qDebug() << "lastSunday " << lastSunday;
+            if(lastSunday){
+                date.addDays(-1);
+                lastSunday = false;
+            }
+            if(date.dayOfWeek() == 7 && i >= nbDaysInMonth + nbDaysUseless) lastSunday = true;
         }
     }
     view->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
