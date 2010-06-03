@@ -1,30 +1,27 @@
-#ifndef TABITEMROOM_H
-#define TABITEMROOM_H
+#ifndef TABITEMNEWS_H
+#define TABITEMNEWS_H
 
 #include <QtCore>
 #include <QtGui>
 #include <QtSql>
 
-#include "TabItemRoomActions.h"
 #include "Commons.h"
 
-class TabItemRoom : public QWidget
+class TabItemNews : public QWidget
 {
 Q_OBJECT
 public:
-    TabItemRoom(QWidget *parent = 0);
+    TabItemNews(int user_id, QWidget *parent = 0);
 
 private:
-    QSqlQueryModel *model;
-    QTableView *view;
-    QSortFilterProxyModel *proxyModel;
+    int id;
+
+    QLabel *lb_message;
+    QTableWidget *table;
 
 private slots:
-    void createMenu(QPoint pos);
-    void deleteItem();
-    void editItem();
-    void addItem();
     void refreshList();
+    void acceptMeeting();
 
 };
 

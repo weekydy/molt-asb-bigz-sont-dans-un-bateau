@@ -7,11 +7,9 @@ CONFIG += console \
 TARGET = Schedule
 TEMPLATE = app
 SOURCES += main.cpp \
-    TabWidget.cpp \
     MainWindow.cpp \
     LoginWidget.cpp \
     DbAccess.cpp \
-    TabItemWidget.cpp \
     TabItemRoom.cpp \
     TabItemRoomActions.cpp \
     SubscribeWidget.cpp \
@@ -22,13 +20,12 @@ SOURCES += main.cpp \
     TabItemPlanning.cpp \
     MeetingActions.cpp \
     MeetingDetails.cpp \
-    SolutionsEngine.cpp
-HEADERS += TabWidget.h \
-    MainWindow.h \
+    SolutionsEngine.cpp \
+    TabItemNews.cpp
+HEADERS += MainWindow.h \
     LoginWidget.h \
     DbAccess.h \
     Commons.h \
-    TabItemWidget.h \
     TabItemRoom.h \
     TabItemRoomActions.h \
     SubscribeWidget.h \
@@ -39,4 +36,5 @@ HEADERS += TabWidget.h \
     TabItemPlanning.h \
     MeetingActions.h \
     MeetingDetails.h \
-    SolutionsEngine.h
+    SolutionsEngine.h \
+    TabItemNews.h

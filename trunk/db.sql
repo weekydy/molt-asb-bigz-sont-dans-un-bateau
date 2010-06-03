@@ -36,15 +36,17 @@ INSERT INTO equipment VALUES(null, 'Cafetière');
 
 CREATE TABLE meeting(
 	meeting_id integer PRIMARY KEY AUTOINCREMENT,
+	user_id integer,
 	room_id integer,
 	meeting_begin datetime,
 	meeting_end datetime,
 	meeting_label varchar,
 	meeting_periodic integer,
+	
 	FOREIGN KEY('room_id') REFERENCES 'room' ('room_id')
 );
 
-INSERT INTO meeting VALUES(null, 2, '2010-05-20 08:45', '2010-05-20 11:30', 'Retraite de Jean-Paul', '0');
+INSERT INTO meeting VALUES(null, '1', '2', '2010-05-20 08:45', '2010-05-20 11:30', 'Retraite de Jean-Paul', '0');
 
 CREATE TABLE user(
 	user_id integer PRIMARY KEY AUTOINCREMENT,
@@ -84,13 +86,12 @@ INSERT INTO haveequipment VALUES('4', '8');
 CREATE TABLE havemeeting(
 	meeting_id integer,
 	user_id integer,
-	organizer boolean,
-	state integer,
+	hm_state integer,
 	PRIMARY KEY('meeting_id', 'user_id'),
 	FOREIGN KEY('meeting_id') REFERENCES 'meeting' ('meeting_id'),
 	FOREIGN KEY('user_id') REFERENCES 'user' ('user_id')
 );
 
-INSERT INTO havemeeting VALUES('1', '1', 'true', '1');
-INSERT INTO havemeeting VALUES('1', '2', 'false', '1');
-INSERT INTO havemeeting VALUES('1', '3', 'false', '0');
+INSERT INTO havemeeting VALUES('1', '1', '1');
+INSERT INTO havemeeting VALUES('1', '2', '1');
+INSERT INTO havemeeting VALUES('1', '3', '0');

@@ -8,12 +8,11 @@
 #include "Commons.h"
 #include "dbAccess.h"
 #include "LoginWidget.h"
-#include "TabWidget.h"
-#include "TabItemWidget.h"
 #include "TabItemRoom.h"
 #include "TabItemUser.h"
 #include "TabItemEquipment.h"
 #include "TabItemPlanning.h"
+#include "TabItemNews.h"
 
 
 using namespace std;

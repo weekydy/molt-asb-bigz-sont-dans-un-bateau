@@ -76,7 +76,10 @@ void MainWindow::createWidgets(){
         layout_top->addStretch();
         layout_top->addWidget(button_logout);
 
-        TabWidget *tabWidget = new TabWidget(this);
+        QTabWidget *tabWidget = new QTabWidget(this);
+        tabWidget->setMovable(true);
+
+        tabWidget->addTab(new TabItemNews(user_id), "Notifications");
         tabWidget->addTab(new TabItemPlanning(user_id), "Planning");
 
         if(access == ONLINE_USER){
@@ -85,7 +88,6 @@ void MainWindow::createWidgets(){
         }
         else if(access == ONLINE_ROOT){
             myStatusBar->showMessage("Connecté (Admin)");
-            tabWidget->addTab(new TabItemWidget(), "Administration");
             tabWidget->addTab(new TabItemUser(), "Utilisateurs");
             tabWidget->addTab(new TabItemRoom(), "Salles");
             tabWidget->addTab(new TabItemEquipment(), "Equipements");
