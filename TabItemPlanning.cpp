@@ -263,8 +263,7 @@ void TabItemPlanning::refreshList(){
         int nbDaysInMonth = date.daysInMonth();
         int i = 1;
         int nbDaysUseless = 0;
-        bool lastSunday = false; // pour afficher le dernier dimanche
-        while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless || lastSunday){ // on parcours le mois
+        while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless){ // on parcours le mois
             qDebug() << date.dayOfWeek() << " " << i << " " << nbDaysInMonth + nbDaysUseless;
             if(date.month() != date_backup.month()){ nbDaysUseless++; }
             qDebug() << date.toString("yyyy-MM-dd");
@@ -300,12 +299,6 @@ void TabItemPlanning::refreshList(){
             date = date.addDays(1);
             i++;
 
-            qDebug() << "lastSunday " << lastSunday;
-            if(lastSunday){
-                date.addDays(-1);
-                lastSunday = false;
-            }
-            if(date.dayOfWeek() == 7 && i >= nbDaysInMonth + nbDaysUseless) lastSunday = true;
         }
     }
     view->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
