@@ -19,7 +19,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
     button_connect->setFixedWidth(50);
 
     button_subscribe = new QPushButton("Nouveau");
-    button_subscribe->setFixedSize(50, 15);
+    button_subscribe->setFixedSize(52, 17);
 
     label_msg = new QLabel();
 

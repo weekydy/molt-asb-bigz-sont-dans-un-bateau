@@ -4,6 +4,8 @@ TabItemEquipment::TabItemEquipment(QWidget *parent) : QWidget(parent)
 {
     model = new QSqlQueryModel();
 
+    QLabel *lb_message = new QLabel("Faites un clic droit sur les élèments pour avoir accès aux actions.");
+
     view = new QTableView();
     view->setEditTriggers(QAbstractItemView::CurrentChanged);
     view->setDragEnabled(true);
@@ -19,6 +21,7 @@ TabItemEquipment::TabItemEquipment(QWidget *parent) : QWidget(parent)
     refreshList();
 
     QVBoxLayout *layout_main = new QVBoxLayout();
+    layout_main->addWidget(lb_message);
     layout_main->addWidget(view);
 
     setLayout(layout_main);

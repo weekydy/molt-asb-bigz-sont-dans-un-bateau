@@ -6,6 +6,7 @@ CONFIG += console \
     debug
 TARGET = Schedule
 TEMPLATE = app
+RESOURCES += resources.qrc
 SOURCES += main.cpp \
     MainWindow.cpp \
     LoginWidget.cpp \

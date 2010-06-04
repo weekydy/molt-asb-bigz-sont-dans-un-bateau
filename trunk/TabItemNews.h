@@ -21,7 +21,8 @@ private:
 
 private slots:
     void refreshList();
-    void acceptMeeting();
+    void acceptMeeting(int id_meeting);
+    void declineMeeting(int id_meeting);
 
 };
 
