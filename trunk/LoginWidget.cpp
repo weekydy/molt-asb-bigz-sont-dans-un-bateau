@@ -4,16 +4,21 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
 {
     setFixedSize(220, 160);
 
+    settings = new QSettings("LO45", "Agenda");
+
     le_id = new QLineEdit();
     le_id->setMaxLength(20);
     le_id->setFixedWidth(100);
-    le_id->setText("agavigne");
+    le_id->setText(settings->value("login/nickname").toString());
 
     le_pass = new QLineEdit();
     le_pass->setEchoMode(QLineEdit::Password);
     le_pass->setMaxLength(20);
     le_pass->setFixedWidth(100);
-    le_pass->setText("asb");
+    le_pass->setText(settings->value("login/password").toString());
+
+    cb_remember = new QCheckBox();
+    cb_remember->setChecked(settings->value("login/remember").toBool());
 
     button_connect = new QPushButton("Valider");
     button_connect->setFixedWidth(50);
@@ -26,6 +31,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
     QFormLayout *fl_log = new QFormLayout;
     fl_log->addRow("Identifiant:", le_id);
     fl_log->addRow("Mot de passe:", le_pass);
+    fl_log->addRow("Se souvenir:", cb_remember);
     fl_log->addWidget(label_msg);
     fl_log->addWidget(button_connect);
 
@@ -54,6 +60,18 @@ void LoginWidget::connection(){
 
     if(req.first()){
         label_msg->setText("Informations valides");
+
+        if(cb_remember->isChecked()){
+            settings->setValue("login/nickname", le_id->text());
+            settings->setValue("login/password", le_pass->text());
+            settings->setValue("login/remember", true);
+        }
+        else{
+            settings->setValue("login/nickname", "");
+            settings->setValue("login/password", "");
+            settings->setValue("login/remember", false);
+        }
+
         int id_user = req.value(rec.indexOf("user_id")).toInt();
         int access = req.value(rec.indexOf("user_access")).toInt();
         emit notifyConnected(id_user, access);

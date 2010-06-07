@@ -11,18 +11,17 @@ class TabItemUser : public QWidget
 {
 Q_OBJECT
 public:
-    TabItemUser(QWidget *parent = 0);
+    TabItemUser(int _user_id, QWidget *parent = 0);
 
 private:
-    //QStandardItemModel *model;
-    QSqlQueryModel *model;
-    QTableView *view;
-    QSortFilterProxyModel *proxyModel;
+    int user_id;
+    QTableWidget *table;
 
 private slots:
     void createMenu(QPoint pos);
     void deleteItem();
     void refreshList();
+    void setAdmin(int);
 
 };
 

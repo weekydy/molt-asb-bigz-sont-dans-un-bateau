@@ -21,7 +21,9 @@ private:
     QPushButton *button_connect;
     QPushButton *button_subscribe;
     QLabel *label_msg;
+    QCheckBox *cb_remember;
 
+    QSettings *settings;
     //void keyPressEvent(QKeyEvent *keyEvent);
 
 private slots:
