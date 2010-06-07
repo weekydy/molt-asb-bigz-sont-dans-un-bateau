@@ -79,8 +79,9 @@ void MainWindow::createWidgets(){
         QTabWidget *tabWidget = new QTabWidget(this);
         tabWidget->setMovable(true);
 
-        tabWidget->addTab(new TabItemNews(user_id), "Notifications");
-        tabWidget->addTab(new TabItemPlanning(user_id), "Planning");
+        tabWidget->addTab(new TabItemNews(user_id), "Mes notifications");
+        tabWidget->addTab(new TabItemPlanning(user_id), "Mon planning");
+        tabWidget->addTab(new TabItemProfile(user_id), "Mon profil");
 
         if(access == ONLINE_USER){
             myStatusBar->showMessage("Connecté");
@@ -88,7 +89,8 @@ void MainWindow::createWidgets(){
         }
         else if(access == ONLINE_ROOT){
             myStatusBar->showMessage("Connecté (Admin)");
-            tabWidget->addTab(new TabItemUser(), "Utilisateurs");
+            tabWidget->addTab(new TabItemUser(user_id), "Utilisateurs");
+            tabWidget->addTab(new TabItemGroup(), "Groupes");
             tabWidget->addTab(new TabItemRoom(), "Salles");
             tabWidget->addTab(new TabItemEquipment(), "Equipements");
         }

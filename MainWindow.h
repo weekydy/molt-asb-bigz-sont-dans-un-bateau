@@ -13,6 +13,8 @@
 #include "TabItemEquipment.h"
 #include "TabItemPlanning.h"
 #include "TabItemNews.h"
+#include "TabItemGroup.h"
+#include "TabItemProfile.h"
 
 
 using namespace std;

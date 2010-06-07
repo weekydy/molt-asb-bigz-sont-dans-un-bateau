@@ -22,7 +22,11 @@ SOURCES += main.cpp \
     MeetingActions.cpp \
     MeetingDetails.cpp \
     SolutionsEngine.cpp \
-    TabItemNews.cpp
+    TabItemNews.cpp \
+    TabItemGroup.cpp \
+    TabItemGroupActions.cpp \
+    TabItemProfile.cpp \
+    ListWidget.cpp
 HEADERS += MainWindow.h \
     LoginWidget.h \
     DbAccess.h \
@@ -38,4 +42,8 @@ HEADERS += MainWindow.h \
     MeetingActions.h \
     MeetingDetails.h \
     SolutionsEngine.h \
-    TabItemNews.h
+    TabItemNews.h \
+    TabItemGroup.h \
+    TabItemGroupActions.h \
+    TabItemProfile.h \
+    ListWidget.h
