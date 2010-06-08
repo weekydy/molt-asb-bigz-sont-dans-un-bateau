@@ -26,7 +26,8 @@ SOURCES += main.cpp \
     TabItemGroup.cpp \
     TabItemGroupActions.cpp \
     TabItemProfile.cpp \
-    ListWidget.cpp
+    ListWidget.cpp \
+    Smtp.cpp
 HEADERS += MainWindow.h \
     LoginWidget.h \
     DbAccess.h \
@@ -46,4 +47,5 @@ HEADERS += MainWindow.h \
     TabItemGroup.h \
     TabItemGroupActions.h \
     TabItemProfile.h \
-    ListWidget.h
+    ListWidget.h \
+    Smtp.h
