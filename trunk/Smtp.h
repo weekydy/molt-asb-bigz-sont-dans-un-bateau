@@ -3,7 +3,7 @@
 
 #include <QtCore>
 #include <QtGui>
-#include <QTcpSocket>
+#include <QtNetwork>
 
 class Smtp : public QObject
 {

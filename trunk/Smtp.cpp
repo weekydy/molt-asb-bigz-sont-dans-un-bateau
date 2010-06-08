@@ -53,7 +53,7 @@ void Smtp::disconnected()
 
 void Smtp::connected()
 {
-    output->append("connected");
+    //output->append("connected");
     qDebug() << "Connected ";
 }
 
