@@ -2,6 +2,7 @@
 # Project created by QtCreator 2010-05-05T23:10:56
 # -------------------------------------------------
 QT += sql
+QT += network
 CONFIG += console \
     debug
 TARGET = Schedule

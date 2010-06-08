@@ -4,6 +4,7 @@ SolutionsEngine::SolutionsEngine() {}
 
 void SolutionsEngine::findHours(QDateTime date, int duration, int id_room, QList<int> id_people)
 {
+    //Requette retournant toutes les réunions à un jour donné
     QSqlQuery *req = new QSqlQuery();
     req->prepare("SELECT meeting_begin, meeting_end FROM meeting m WHERE m.room_id = 2 AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day");
     req->bindValue(":year", date.date().year());
@@ -49,19 +50,17 @@ void SolutionsEngine::findHours(QDateTime date, int duration, int id_room, QList
             QTime qtB = QTime::fromString(qdtB.toString("hh:mm"));
             QTime qtE = QTime::fromString(qdtE.toString("hh:mm"));
 
-            QBitArray* qba_room = new QBitArray(48);
+            QBitArray* qba_people = new QBitArray(48);
 
             int noRow_b = (qtB.hour() - 8) * 4 + qtB.minute() / 15; // numéro de la ligne où le RV commence
             int noRow_e = (qtE.hour() - 8) * 4 + qtE.minute() / 15 - 1; // numéro de la ligne où le RV termine (le -1 indique qu'on ne commence pas le dernier quart d'heure)
 
-            for (int j = 0; j < qba_room->size(); ++j)
+            for (int j = 0; j < qba_people->size(); ++j)
             {
                 if (j >= noRow_b && j <= noRow_e)
-                    qba_room->setBit(j, true);
+                    qba_people->setBit(j, true);
             }
-            ql_qba.push_back(qba_room);
+            ql_qba.push_back(qba_people);
         }
-
-
     }
 }
