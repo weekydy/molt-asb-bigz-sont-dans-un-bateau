@@ -1,7 +1,9 @@
 #include "MeetingActions.h"
+#include <iostream>
 
 MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(parent)
 {
+    engine = new SolutionsEngine();
     action = _action;
     id = _id;
 
@@ -70,6 +72,22 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     connect(btn_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     connect(btn_action, SIGNAL(clicked()), this, SLOT(makeAction()));
     connect(cb_room, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBoxEquipment(int)));
+    connect(btn_find, SIGNAL(clicked()), this, SLOT(findHours()));
+    connect(btn_check, SIGNAL(clicked()), this, SLOT(findRoom()));
+}
+
+void MeetingActions::findHours () {
+    QList<int> liste;
+    liste.append(1);
+    liste.append(2);
+    liste.append(3);
+    QDateTime qdt = engine->findHours(QDateTime::currentDateTime(), 40, 2, liste);
+}
+
+void MeetingActions::findRoom () {
+    int nb = 5;
+    int id_room = engine->findRoom(nb);
+    std::cout << id_room;
 }
 
 void MeetingActions::makeAction(){

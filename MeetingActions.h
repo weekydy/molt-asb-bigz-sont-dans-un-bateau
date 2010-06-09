@@ -7,6 +7,7 @@
 
 #include "Commons.h"
 #include "CheckBoxList.h"
+#include "SolutionsEngine.h"
 
 class MeetingActions : public QDialog
 {
@@ -34,9 +35,13 @@ private:
     QPushButton *btn_action;
     QPushButton *btn_cancel;
 
+    SolutionsEngine* engine;
+
 private slots:
     void makeAction();
     void changeComboBoxEquipment(int);
+    void findHours();
+    void findRoom();
 
 signals:
     void notifyRefreshList();
