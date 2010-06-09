@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     }
 
 
-    //Smtp *newMail = new Smtp("from@address.com","to@address.com"," Your Subject","My body text");
+    //Smtp *newMail = new Smtp("adrien.gavignet@gmail.com", "bastien.cramillet@gmail.com", "Test","Moi, un plow du reseau ?");
     //delete newMail;
 
     MainWindow w;
