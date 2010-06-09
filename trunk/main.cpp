@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     }
 
 
-    Smtp *newMail = new Smtp("from@address.com","to@address.com"," Your Subject","My body text");
-    delete newMail;
+    //Smtp *newMail = new Smtp("from@address.com","to@address.com"," Your Subject","My body text");
+    //delete newMail;
 
     MainWindow w;
     w.show();

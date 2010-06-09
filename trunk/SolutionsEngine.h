@@ -11,7 +11,8 @@ public :
         SolutionsEngine();
         ~SolutionsEngine();
 
-        void findHours(QDateTime date, int duration, int id_room, QList<int> id_people);
+        QDateTime findHours(QDateTime date, int duration, int id_room, QList<int> id_people);
+        int findRoom(int id_people);
 };
 
 #endif // SOLUTIONSENGINE_H
