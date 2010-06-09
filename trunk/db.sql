@@ -49,8 +49,7 @@ CREATE TABLE meeting(
 	FOREIGN KEY('room_id') REFERENCES 'room' ('room_id')
 );
 
-INSERT INTO meeting VALUES(null, '2', '2010-05-20 08:45', '2010-06-09 11:30', 'Retraite de Jean-Paul', '0');
-INSERT INTO meeting VALUES(null, '1', '2010-05-20 14:45', '2010-06-09 16:30', 'Pot de gerard', '0');
+INSERT INTO meeting VALUES(null, '2', '2010-05-20 08:45', '2010-05-20 11:30', 'Retraite de Jean-Paul', '0');
 
 CREATE TABLE grp(
 	grp_id integer PRIMARY KEY AUTOINCREMENT,
@@ -70,7 +69,7 @@ CREATE TABLE user(
 	user_access integer NOT NULL DEFAULT 1
 );
 
-INSERT INTO user VALUES(null, 'Bastien', 'CRAMILLET', 'bcramill', 'bigz', '2');
+INSERT INTO user VALUES(null, 'Bastien', 'CRAMILLET', 'bcramill', 'bigz', '1');
 INSERT INTO user VALUES(null, 'Adrien', 'GAVIGNET', 'agavigne', 'asb', '2');
 INSERT INTO user VALUES(null, 'Jérémy', 'MALTIS', 'jmaltis', 'moltes', '1');
 
@@ -89,9 +88,9 @@ INSERT INTO belongtogroup VALUES('2', '3');
 CREATE TABLE message(
 	user_id_from integer,
 	user_id_to integer,
-	msg_date,
+	msg_date datetime,
 	msg_text text,
-	PRIMARY KEY ('user_id_from', 'user_id_to'),
+	PRIMARY KEY ('user_id_from', 'user_id_to', 'msg_date'),
 	FOREIGN KEY ('user_id_from') REFERENCES 'user' ('user_id'),
 	FOREIGN KEY ('user_id_to') REFERENCES 'user' ('user_id')
 );
@@ -142,4 +141,3 @@ CREATE TABLE havemeeting(
 INSERT INTO havemeeting VALUES('1', '1', '1');
 INSERT INTO havemeeting VALUES('1', '2', '1');
 INSERT INTO havemeeting VALUES('1', '3', '0');
-INSERT INTO havemeeting VALUES('2','1','1');
