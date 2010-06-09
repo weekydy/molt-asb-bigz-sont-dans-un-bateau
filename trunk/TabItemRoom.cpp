@@ -4,7 +4,17 @@ TabItemRoom::TabItemRoom(QWidget *parent) : QWidget(parent)
 {
     model = new QSqlQueryModel();
 
-    QLabel *lb_message = new QLabel("Faites un clic droit sur les élèments pour avoir accès aux actions.");
+    btn_add = new QPushButton("Ajouter");
+    btn_edit = new QPushButton("Modifier");
+    btn_edit->setDisabled(true);
+    btn_del = new QPushButton("Supprimer");
+    btn_del->setDisabled(true);
+
+    QHBoxLayout *layout_btn = new QHBoxLayout();
+    layout_btn->addWidget(btn_add);
+    layout_btn->addWidget(btn_edit);
+    layout_btn->addWidget(btn_del);
+    layout_btn->addStretch();
 
     view = new QTableView();
     view->setDragEnabled(true);
@@ -20,16 +30,20 @@ TabItemRoom::TabItemRoom(QWidget *parent) : QWidget(parent)
     refreshList();
 
     QVBoxLayout *layout_main = new QVBoxLayout();
-    layout_main->addWidget(lb_message);
+    layout_main->addLayout(layout_btn);
     layout_main->addWidget(view);
 
     setLayout(layout_main);
 
     connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(createMenu(QPoint)));
-
+    connect(view, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState(QModelIndex)));
+    connect(btn_add, SIGNAL(clicked()), this, SLOT(addItem()));
+    connect(btn_edit, SIGNAL(clicked()), this, SLOT(editItem()));
+    connect(btn_del, SIGNAL(clicked()), this, SLOT(deleteItem()));
 }
 
-void TabItemRoom::refreshList(){
+void TabItemRoom::refreshList()
+{
     model->setQuery("SELECT * FROM room ORDER BY room_name");
     model->setHeaderData(1, Qt::Horizontal, "Nom");
     model->setHeaderData(2, Qt::Horizontal, "Capacité");
@@ -59,6 +73,19 @@ void TabItemRoom::createMenu(QPoint pos){
     }
     connect(action_add, SIGNAL(triggered()), this, SLOT(addItem()));
     menu->exec(view->mapToGlobal(pos));
+}
+
+void TabItemRoom::refreshButtonState(QModelIndex index){
+    if(index.isValid())
+    {
+        btn_edit->setDisabled(false);
+        btn_del->setDisabled(false);
+    }
+    else
+    {
+        btn_edit->setDisabled(true);
+        btn_del->setDisabled(true);
+    }
 }
 
 void TabItemRoom::deleteItem(){

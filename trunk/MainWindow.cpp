@@ -70,10 +70,12 @@ void MainWindow::createWidgets(){
         label_welcome->setText("Bonjour "+req.value(0).toString()+" "+req.value(1).toString()+" !");
 
         QPushButton *button_logout = new QPushButton("Déconnexion");
+        QPushButton *button_delele = new QPushButton("Supprimer mon compte");
 
         QHBoxLayout *layout_top = new QHBoxLayout();
         layout_top->addWidget(label_welcome);
         layout_top->addStretch();
+        layout_top->addWidget(button_delele);
         layout_top->addWidget(button_logout);
 
         QTabWidget *tabWidget = new QTabWidget(this);
@@ -103,6 +105,7 @@ void MainWindow::createWidgets(){
         widget_central->setLayout(layout_central);
 
         connect(button_logout, SIGNAL(clicked()), this, SLOT(disconnected()));
+        connect(button_delele, SIGNAL(clicked()), this, SLOT(deleteAccount()));
 
         setCentralWidget(widget_central);
 
@@ -146,6 +149,27 @@ void MainWindow::disconnected(){
 
     createWidgets();
 }
+
+void MainWindow::deleteAccount(){
+    QSqlQuery *req = new QSqlQuery();
+    req->prepare("DELETE FROM user WHERE user_id = :user_id");
+    req->bindValue(":user_id", user_id);
+
+    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer votre compte ?", QMessageBox::Yes | QMessageBox::No);
+    if(rep == QMessageBox::Yes){
+        if (req->exec()){
+            user_id = -1;
+            access = OFFLINE;
+
+            createWidgets();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "Votre compte a été supprimé, vous êtes déconnecté !");
+        }
+        else
+            QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
+    }
+}
+
+
 
 void MainWindow::createSignalsSlots(){
     connect(action_quit, SIGNAL(triggered()), qApp, SLOT(quit()));

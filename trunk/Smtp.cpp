@@ -7,9 +7,9 @@ Smtp::Smtp( const QString &from, const QString &to, const QString &subject, cons
 
     connect( socket, SIGNAL( readyRead() ), this, SLOT( readyRead() ) );
     connect( socket, SIGNAL( connected() ), this, SLOT( connected() ) );
-    connect( socket, SIGNAL(error(SocketError)), this, SLOT(errorReceived(SocketError)));
-    connect( socket, SIGNAL(stateChanged( SocketState)), this, SLOT(stateChanged(SocketState)));
-    connect(socket, SIGNAL(disconnectedFromHost()), this, SLOT(disconnected()));
+    connect( socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(errorReceived(QAbstractSocket::SocketError)));
+    connect( socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
+    connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
 
     message = "To: " + to + "\n";
     message.append("From: " + from + "\n");

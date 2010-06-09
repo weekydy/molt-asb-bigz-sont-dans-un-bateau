@@ -4,7 +4,14 @@ TabItemGroup::TabItemGroup(QWidget *parent) : QWidget(parent)
 {
     model = new QSqlQueryModel();
 
-    QLabel *lb_message = new QLabel("Faites un clic droit sur les élèments pour avoir accès aux actions.");
+    btn_add = new QPushButton("Ajouter");
+    btn_del = new QPushButton("Supprimer");
+    btn_del->setDisabled(true);
+
+    QHBoxLayout *layout_btn = new QHBoxLayout();
+    layout_btn->addWidget(btn_add);
+    layout_btn->addWidget(btn_del);
+    layout_btn->addStretch();
 
     view = new QTableView();
     view->setEditTriggers(QAbstractItemView::CurrentChanged);
@@ -21,12 +28,15 @@ TabItemGroup::TabItemGroup(QWidget *parent) : QWidget(parent)
     refreshList();
 
     QVBoxLayout *layout_main = new QVBoxLayout();
-    layout_main->addWidget(lb_message);
+    layout_main->addLayout(layout_btn);
     layout_main->addWidget(view);
 
     setLayout(layout_main);
 
     connect(view, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(createMenu(QPoint)));
+    connect(view, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState(QModelIndex)));
+    connect(btn_add, SIGNAL(clicked()), this, SLOT(addItem()));
+    connect(btn_del, SIGNAL(clicked()), this, SLOT(deleteItem()));
 
 }
 
@@ -82,6 +92,17 @@ void TabItemGroup::deleteItem(){
             else
                 QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
         }
+    }
+}
+
+void TabItemGroup::refreshButtonState(QModelIndex index){
+    if(index.isValid())
+    {
+        btn_del->setDisabled(false);
+    }
+    else
+    {
+        btn_del->setDisabled(true);
     }
 }
 

@@ -65,8 +65,10 @@ void ListWidget::startDrag()
 
         QDrag *drag = new QDrag(this);
         drag->setMimeData(mimeData);
-        drag->setPixmap(QPixmap(":/images/person.png"));
-        if (drag->start(Qt::MoveAction) == Qt::MoveAction)
+        drag->setPixmap(QPixmap(":add_one.png"));
+        if (drag->start(Qt::MoveAction) == Qt::MoveAction){
             delete item;
+            emit notifyNewItem();
+        }
     }
 }

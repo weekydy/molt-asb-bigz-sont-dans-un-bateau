@@ -51,6 +51,7 @@ public slots:
     void about();
     void updateConnected(int user_id, int access);
     void disconnected();
+    void deleteAccount();
 
 };
 
