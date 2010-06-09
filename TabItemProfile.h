@@ -35,9 +35,16 @@ private:
 
     void moveCurrentItem(ListWidget *source, ListWidget *target);
 
+
 private slots:
     void on_leftButton_clicked();
     void on_rightButton_clicked();
+    void refreshButtonStateLeft();
+    void refreshButtonStateRight();
+    void updateGroups();
+    void editInfo();
+    void editPassword();
+
 };
 
 #endif // TABITEMUSER_H

@@ -4,12 +4,12 @@ TabItemUser::TabItemUser(int _user_id, QWidget *parent) : QWidget(parent)
 {
     user_id = _user_id;
 
-    QLabel *lb_message = new QLabel("Faites un clic droit sur les élèments pour avoir accès aux actions.");
+
 
     table = new QTableWidget(0,6,this);
 
     table->verticalHeader()->hide();
-    //table->hideColumn(0); // On cache la clé
+    table->hideColumn(0); // On cache la clé
     table->setSelectionMode(QAbstractItemView::NoSelection);
     table->setAlternatingRowColors(true);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -18,7 +18,6 @@ TabItemUser::TabItemUser(int _user_id, QWidget *parent) : QWidget(parent)
     refreshList();
 
     QVBoxLayout *layout_main = new QVBoxLayout();
-    layout_main->addWidget(lb_message);
     layout_main->addWidget(table);
 
     setLayout(layout_main);
@@ -78,10 +77,15 @@ void TabItemUser::refreshList(){
 
 
             QTableWidgetItem *twi_id_user = new QTableWidgetItem();
-            twi_id_user->setData(Qt::DisplayRole, id_user);
             QTableWidgetItem *twi_surname = new QTableWidgetItem(surname);
             QTableWidgetItem *twi_name = new QTableWidgetItem(name);
             QTableWidgetItem *twi_nickname = new QTableWidgetItem(nickname);
+
+            twi_id_user->setData(Qt::DisplayRole, id_user);
+            twi_id_user->setFlags(twi_id_user->flags() & ~Qt::ItemIsEditable);
+            twi_surname->setFlags(twi_surname->flags() & ~Qt::ItemIsEditable);
+            twi_name->setFlags(twi_name->flags() & ~Qt::ItemIsEditable);
+            twi_nickname->setFlags(twi_nickname->flags() & ~Qt::ItemIsEditable);
 
             j = 0;
             table->insertRow(i);

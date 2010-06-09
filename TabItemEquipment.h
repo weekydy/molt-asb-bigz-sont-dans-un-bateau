@@ -20,11 +20,15 @@ private:
     QTableView *view;
     QSortFilterProxyModel *proxyModel;
 
+    QPushButton *btn_add;
+    QPushButton *btn_del;
+
 private slots:
     void createMenu(QPoint pos);
     void deleteItem();
     void addItem();
     void refreshList();
+    void refreshButtonState(QModelIndex index);
 
 };
 

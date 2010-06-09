@@ -19,8 +19,11 @@ protected:
 
 private:
     void startDrag();
-
     QPoint startPos;
+
+signals:
+    void notifyNewItem();
+
 };
 
 #endif
