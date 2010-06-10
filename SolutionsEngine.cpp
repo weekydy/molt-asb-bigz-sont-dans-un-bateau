@@ -118,10 +118,10 @@ QDateTime SolutionsEngine::findHours(QDateTime date, int duration, int id_room, 
 
     int minute = (begin % 4) * 15 ; // numéro de la ligne où le RV commence
     int hour = begin / 4 + 8; // numéro de la ligne où le RV termine (le -1 indique qu'on ne commence pas le dernier quart d'heure)
-    std::cout << begin << " --> " << hour << ":" << minute;
     date = date.addDays(-1);
-    date.time().setHMS(hour, minute, 0, 0);
+    date.setTime(QTime(hour, minute, 0, 0));
     qDebug() << date.date();
+    qDebug() << date.time();
 
     return date;
 }

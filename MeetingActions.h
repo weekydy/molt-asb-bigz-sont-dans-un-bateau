@@ -24,18 +24,24 @@ private:
     QDateTimeEdit *dt_begin2;
     QDateTimeEdit *dt_end;
 
+    QTimeEdit *qte_duration;
+
     CheckBoxList *list_users;
 
     QComboBox *cb_room;
     QComboBox *list_equipments;
+    QComboBox *qcb_recurring;
 
     QFormLayout *fl_data;
+    QFormLayout *fl_hour;
+    QFormLayout *fl_recurring;
 
     QPushButton *btn_findHour;
     QPushButton *btn_findRoom;
     QPushButton *btn_action;
     QPushButton *btn_cancel;
 
+    QGroupBox *qgb_frm;
     QGroupBox *qgb_room;
     QGroupBox *qgb_hour;
     QGroupBox *qgb_option;
@@ -45,7 +51,6 @@ private:
     QCheckBox *qcb_extend;
     QCheckBox *qcb_available;
     QCheckBox *qcb_compulsory;
-    QCheckBox *qcb_recurring;
 
     SolutionsEngine* engine;
 

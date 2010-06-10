@@ -16,6 +16,9 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     dt_end = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_end->setDisplayFormat("dd/MM/yyyy hh:mm");
 
+    qte_duration = new QTimeEdit();
+    qte_duration->setDisplayFormat("hh:mm");
+
     list_users = new CheckBoxList();
     list_users->addItem("Choisissez :", false);
     QSqlQuery *req = new QSqlQuery;
@@ -41,44 +44,114 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
         list_equipments->addItem(req->value(1).toString(), false);
     }
 
-    fl_data = new QFormLayout;
-    fl_data->addRow("Libellé:", le_label);
-    fl_data->addRow("Début:", dt_begin);
-    fl_data->addRow("Fin:", dt_end);
-    fl_data->addRow("Invité(s):", list_users);
-    fl_data->addRow("Salle:", cb_room);
-    fl_data->addRow("Equipement(s):", list_equipments);
+    qcb_recurring = new QComboBox();
+    qcb_recurring->addItem("Ponctuel");
+    qcb_recurring->addItem("Hebdomadaire");
+    qcb_recurring->addItem("Mensuel");
 
     btn_findHour = new QPushButton("Chercher");
     btn_findRoom = new QPushButton("Chercher");
     btn_action = new QPushButton("Valider");
+    //btn_action->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
     btn_cancel = new QPushButton("&Annuler");
+    //btn_cancel->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
+    qgb_frm = new QGroupBox("Détails de la réunion");
     qgb_room = new QGroupBox("Recherche de salle");
     qgb_hour = new QGroupBox("Recherche de crénau");
     qgb_option = new QGroupBox("Autres options");
 
     qcb_guest = new QCheckBox("Adapté au nombre d'invités");
-    qcb_equipment = new QCheckBox("Ayant comme équipements");
+    qcb_equipment = new QCheckBox("Adapté aux équipements");
     qcb_extend = new QCheckBox("Recherche extensible sur plusieurs jours");
     qcb_available = new QCheckBox("Disponibilité des invités nécessaire");
-    qcb_compulsory = new QCheckBox("Présence obligatoire");
-    qcb_recurring = new QCheckBox("Périodique");
+    qcb_compulsory = new QCheckBox();
+
+    fl_data = new QFormLayout;
+    fl_data->addRow("Libellé :", le_label);
+    fl_data->addRow("Début :", dt_begin);
+    fl_data->addRow("Fin :", dt_end);
+    fl_data->addRow("Invité(s) :", list_users);
+    fl_data->addRow("Salle :", cb_room);
+    fl_data->addRow("Equipement(s) :", list_equipments);
+    qgb_frm->setLayout(fl_data);
+
+    fl_hour = new QFormLayout;
+    fl_hour->addRow("Début :", dt_begin2);
+    fl_hour->addRow("Durée :", qte_duration);
+
+    fl_recurring = new QFormLayout;
+    fl_recurring->addRow("Présence obligatoire :", qcb_compulsory);
+    fl_recurring->addRow("Périodicité :", qcb_recurring);
+
 
     if(action == ADD){
         setWindowTitle("Planifier une réunion");
     }
 
+    /** Fieldset de la recherche de salle **/
+    QVBoxLayout *vbl_room1 = new QVBoxLayout;
+    vbl_room1->addWidget(qcb_guest);
+    vbl_room1->addWidget(qcb_equipment);
+    QVBoxLayout *vbl_room2 = new QVBoxLayout;
+    vbl_room2->addWidget(btn_findRoom);
+
+    QHBoxLayout *hbl_room = new QHBoxLayout;
+    hbl_room->setAlignment(Qt::AlignLeft);
+    qgb_room->setLayout(hbl_room);
+    hbl_room->addLayout(vbl_room1);
+    hbl_room->addStretch();
+    hbl_room->addLayout(vbl_room2);
+
+    /** Fieldset de la recherche de crénau **/
+    QVBoxLayout *vbl_hour1 = new QVBoxLayout;
+    vbl_hour1->addLayout(fl_hour);
+    vbl_hour1->addWidget(qcb_extend);
+    vbl_hour1->addWidget(qcb_available);
+    QVBoxLayout *vbl_hour2 = new QVBoxLayout;
+    vbl_hour2->setAlignment(Qt::AlignRight);
+    vbl_hour2->addWidget(btn_findHour);
+
+    QHBoxLayout *hbl_hour = new QHBoxLayout;
+    hbl_hour->setAlignment(Qt::AlignLeft);
+    qgb_hour->setLayout(hbl_hour);
+    hbl_hour->addLayout(vbl_hour1);
+    hbl_hour->addStretch();
+    hbl_hour->addLayout(vbl_hour2);
+
+    /** Fieldset de options **/
+    QVBoxLayout *vbl_option = new QVBoxLayout;
+    vbl_option->addLayout(fl_recurring);
+
+    QHBoxLayout *hbl_option = new QHBoxLayout;
+    hbl_option->setAlignment(Qt::AlignLeft);
+    qgb_option->setLayout(hbl_option);
+    hbl_option->addLayout(vbl_option);
+
+    /** Layout des boutons **/
     QHBoxLayout *layout_buttons = new QHBoxLayout;
     layout_buttons->setAlignment(Qt::AlignRight);
-    layout_buttons->addWidget(btn_findHour);
-    layout_buttons->addWidget(btn_findRoom);
     layout_buttons->addWidget(btn_action);
     layout_buttons->addWidget(btn_cancel);
 
+    /** Layout des salles et crénaux **/
+    QVBoxLayout *vbl_rh = new QVBoxLayout;
+    vbl_rh->addWidget(qgb_room);
+    vbl_rh->addWidget(qgb_hour);
+
+    /** Layout contenant les recherches et le formulaire **/
+    QHBoxLayout *hbl_frh = new QHBoxLayout;
+    hbl_frh->addWidget(qgb_frm);
+    hbl_frh->addLayout(vbl_rh);
+
+    /** Layout des options et des boutons **/
+    QHBoxLayout *hbl_ob = new QHBoxLayout;
+    hbl_ob->addWidget(qgb_option);
+    hbl_ob->addLayout(layout_buttons);
+
     QVBoxLayout *layout_main = new QVBoxLayout;
-    layout_main->addLayout(fl_data);
-    layout_main->addLayout(layout_buttons);
+    layout_main->addLayout(hbl_frh);
+    layout_main->addLayout(hbl_ob);
 
     setLayout(layout_main);
 
@@ -90,17 +163,23 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 }
 
 void MeetingActions::findHours () {
+    //bool available;
     QList<int> liste;
     liste.append(1);
     liste.append(2);
     liste.append(3);
     QDateTime qdt = engine->findHours(QDateTime::currentDateTime(), 40, 2, liste);
+    QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
+    QMessageBox::information(this, "Résultat de la recherche", text_result);
 }
 
 void MeetingActions::findRoom () {
     int nb = 5;
+    //bool guest = qcb_guest->isChecked();
+    //bool equipment = qcb_equipment->isChecked();
     int id_room = engine->findRoom(nb);
-    std::cout << id_room;
+    QString text_result = "La salle " + QString::number(id_room) + " est faite pour vous.";
+    QMessageBox::information(this, "Résultat de la recherche", text_result);
 }
 
 void MeetingActions::makeAction(){
