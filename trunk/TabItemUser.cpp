@@ -11,11 +11,12 @@ TabItemUser::TabItemUser(int _user_id, QWidget *parent) : QWidget(parent)
     table->verticalHeader()->hide();
     table->hideColumn(0); // On cache la clé
     table->setSelectionMode(QAbstractItemView::NoSelection);
-    table->setAlternatingRowColors(true);
+    //table->setAlternatingRowColors(true);
     table->setSelectionBehavior(QAbstractItemView::SelectRows);
     table->setSelectionMode(QAbstractItemView::SingleSelection);
 
     refreshList();
+
 
     QVBoxLayout *layout_main = new QVBoxLayout();
     layout_main->addWidget(table);

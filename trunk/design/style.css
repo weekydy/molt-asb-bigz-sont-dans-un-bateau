@@ -1,0 +1,169 @@
+/* Fenetre principale */
+MainWindow 
+{
+	background: QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255));
+}
+
+/* Boite de dialogue */
+QMessageBox
+{
+	border: 3px solid #528595;
+	background: QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255))
+}
+
+/* Line Edit */
+QLineEdit {
+	padding: 1px;
+	border: 2px solid #528595;
+	border-radius: 6px;
+}
+QLineEdit:focus
+{
+	border: 2px solid #01A4FF;
+}
+
+/* Label */
+QLabel 
+{
+	
+}
+
+/* Boutons */
+QPushButton {
+	color: white;
+	background-color : QLinearGradient(spread:pad, x1:1, y1:0, x2:1, y2:1, stop:0 rgba(189, 232, 255, 255), stop:0.517588 rgba(0, 122, 183, 255), stop:0.527638 rgba(0, 49, 74, 255), stop:1 rgba(1, 164, 214, 255));
+	font-weight : bold;
+	border-radius: 7px;
+	padding: 3px;
+	font-size: 10px;
+	padding-left: 5px;
+	padding-right: 5px;
+	max-height: 13px;
+}
+QPushButton:hover
+{
+	border: 1px solid white;
+}
+QPushButton:pressed
+{
+	background-color : QLinearGradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(189, 232, 255, 255), stop:0.517588 rgba(0, 122, 183, 255), stop:0.527638 rgba(0, 49, 74, 255), stop:1 rgba(1, 164, 214, 255));
+}
+
+/* Menus */
+QMenuBar {
+	background-color : qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0.0301508 rgba(95, 165, 255, 255), stop:0.0452261 rgba(42, 84, 121, 255), stop:0.954774 rgba(59, 163, 207, 255), stop:0.964824 rgba(44, 96, 135, 255));
+	color : white;
+}
+
+QMenuBar::item {
+	spacing: 3px;
+	padding: 1px 4px;
+	background: transparent;
+}
+
+QMenuBar::item:selected {
+	background-color: qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0 rgba(59, 163, 207, 255), stop:1 rgba(42, 84, 121, 255));
+}
+
+QMenuBar::item:pressed {
+	background: #2F527E;
+}
+
+QMenu {
+	color : white;
+	border : none;
+	background-color : qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0.0301508 rgba(95, 165, 255, 255), stop:0.0452261 rgba(42, 84, 121, 255), stop:0.954774 rgba(59, 163, 207, 255), stop:0.964824 rgba(44, 96, 135, 255));
+}
+
+ QMenu::item:selected {
+	background-color : qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0 rgba(59, 163, 207, 255), stop:1 rgba(42, 84, 121, 255));
+}
+
+/* Login et inscription */
+LoginWidget QGroupBox
+{
+	font-weight: bold;
+	font-size: 18px;
+	/*text-align : right;*/
+	border: 3px solid #528595;
+	border-radius: 20px;
+	background: qradialgradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255));
+}
+
+SubscribeWidget
+{
+	border: 3px solid #528595;
+	border-radius: 10px;
+	background: qradialgradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255));
+}
+
+
+/* Checkbox */
+QCheckBox::indicator:checked {
+
+}
+
+/* Tableau d'onglets */
+QTabWidget::pane { 
+	border: 1px solid #2A5479;
+}
+QTabBar::tab {
+	background: qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0 rgba(59, 163, 207, 255), stop:1 rgba(42, 84, 121, 255));
+	border: 1px solid #2A5479;
+	border-bottom : none;
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	min-width: 8ex;
+	padding: 2px;
+	color : white;
+}
+QTabBar::tab:selected, QTabBar::tab:hover {
+	background: qlineargradient(spread:reflect, x1:0.532, y1:0, x2:0.528, y2:1, stop:0 rgba(80, 199, 249, 255), stop:1 rgba(68, 137, 198, 255));
+}
+
+/* Tableaux */
+QTableWidget 
+{
+	selection-background-color: #cfe7fe;
+	selection-color : black;
+	background-color : #E1F0FF;
+}
+QTableWidget HorizontalHeader
+{
+	background-color : #E1F0FF;
+}
+QTableView
+{
+	selection-background-color: #cfe7fe;
+	selection-color : black;
+	background-color : #E1F0FF;
+}
+
+/* Entetes de tableaux */
+QHeaderView {
+	background-color: qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0 rgba(59, 163, 207, 255), stop:1 rgba(42, 84, 121, 255));
+} 
+QHeaderView::section{
+	background-color: qlineargradient(spread:reflect, x1:0.532, y1:0, x2:0.528, y2:1, stop:0 rgba(80, 199, 249, 255), stop:1 rgba(68, 137, 198, 255));
+    color: white;
+    border: 0.5px solid #E1F0FF;
+}
+
+/* Liste */
+QListWidget
+{
+background-color: #cfe7fe;
+}
+
+/* Liste déroulante */
+QComboBox {
+     border: 1px solid gray;
+     border-radius: 3px;
+     padding: 1px 18px 1px 3px;
+     min-width: 6em;
+	 background:QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255));
+ }
+
+ QComboBox:editable {
+     background: qlineargradient(spread:reflect, x1:0.523, y1:0, x2:0.522613, y2:1, stop:0 rgba(59, 163, 207, 255), stop:1 rgba(42, 84, 121, 255));
+ }

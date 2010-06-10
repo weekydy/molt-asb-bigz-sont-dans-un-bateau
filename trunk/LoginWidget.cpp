@@ -24,7 +24,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
     button_connect->setFixedWidth(50);
 
     button_subscribe = new QPushButton("Nouveau");
-    button_subscribe->setFixedSize(52, 17);
+    button_subscribe->setFixedSize(56, 17);
 
     label_msg = new QLabel();
 
@@ -35,7 +35,7 @@ LoginWidget::LoginWidget(QWidget *parent) : QWidget(parent)
     fl_log->addWidget(label_msg);
     fl_log->addWidget(button_connect);
 
-    QGroupBox *gb_log = new QGroupBox("Connexion");
+    QGroupBox *gb_log = new QGroupBox();
     gb_log->setLayout(fl_log);
 
     QVBoxLayout *layout_main = new QVBoxLayout();
@@ -86,8 +86,8 @@ void LoginWidget::subscribe(){
     sw->exec();
 }
 
-/*void LoginWidget::keyPressEvent(QKeyEvent *keyEvent)
+void LoginWidget::keyPressEvent(QKeyEvent *keyEvent)
 {
-    if(keyEvent->key() == Qt::Key_Enter)
+    if(keyEvent->key() == Qt::Key_Enter - 1)
         connection();
-}*/
+}
