@@ -29,7 +29,8 @@ SOURCES += main.cpp \
     TabItemProfile.cpp \
     ListWidget.cpp \
     Smtp.cpp \
-    SendMail.cpp
+    SendMail.cpp \
+    MessageBox.cpp
 HEADERS += MainWindow.h \
     LoginWidget.h \
     DbAccess.h \
@@ -51,4 +52,5 @@ HEADERS += MainWindow.h \
     TabItemProfile.h \
     ListWidget.h \
     Smtp.h \
-    SendMail.h
+    SendMail.h \
+    MessageBox.h

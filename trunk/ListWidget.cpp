@@ -2,9 +2,10 @@
 
 #include "ListWidget.h"
 
-ListWidget::ListWidget(QWidget *parent)
+ListWidget::ListWidget(QString _url, QWidget *parent)
     : QListWidget(parent)
 {
+    url = _url;
     setAcceptDrops(true);
 }
 
@@ -65,7 +66,7 @@ void ListWidget::startDrag()
 
         QDrag *drag = new QDrag(this);
         drag->setMimeData(mimeData);
-        drag->setPixmap(QPixmap(":add_one.png"));
+        drag->setPixmap(QPixmap(":group.png"));
         if (drag->start(Qt::MoveAction) == Qt::MoveAction){
             delete item;
             emit notifyNewItem();

@@ -7,6 +7,7 @@
 
 #include "Commons.h"
 #include "dbAccess.h"
+#include "MessageBox.h"
 #include "LoginWidget.h"
 #include "TabItemRoom.h"
 #include "TabItemUser.h"
