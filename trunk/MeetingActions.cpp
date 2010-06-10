@@ -163,14 +163,18 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 }
 
 void MeetingActions::findHours () {
-    //bool available;
+    bool available = qcb_available->isChecked();
+    bool extend = qcb_extend->isChecked();
     QList<int> liste;
     liste.append(1);
     liste.append(2);
     liste.append(3);
-    QDateTime qdt = engine->findHours(QDateTime::currentDateTime(), 40, 2, liste);
+    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), 2, liste, available, extend);
     QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
     QMessageBox::information(this, "Résultat de la recherche", text_result);
+    dt_begin->setDateTime(qdt);
+    dt_end->setDateTime(qdt);
+    dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
 }
 
 void MeetingActions::findRoom () {

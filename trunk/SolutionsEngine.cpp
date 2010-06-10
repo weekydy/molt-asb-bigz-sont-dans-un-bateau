@@ -6,10 +6,10 @@ SolutionsEngine::SolutionsEngine() {}
 
 SolutionsEngine::~SolutionsEngine() {}
 
-QDateTime SolutionsEngine::findHours(QDateTime date, int duration, int id_room, QList<int> id_people)
+QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room, QList<int> id_people, bool available, bool extend)
 {
     int begin = -1;
-    while(begin < 0)
+    while(begin < 0 )
     {
         //Requette retournant toutes les réunions à un jour donné
         QSqlQuery *req = new QSqlQuery();
@@ -93,12 +93,12 @@ QDateTime SolutionsEngine::findHours(QDateTime date, int duration, int id_room, 
             }
         }
 
-        int qba_room_size = qba_room.size() - duration;
+        int qba_room_size = qba_room.size() - duration.hour();
         for (int i = 0; i < qba_room_size; ++i)
         {
             if (!qba_room[i])
             {
-                int time = i+duration;
+                int time = i+duration.hour();
                 begin = i;
                 for (int j = i; j < time; ++j)
                 {
@@ -120,8 +120,6 @@ QDateTime SolutionsEngine::findHours(QDateTime date, int duration, int id_room, 
     int hour = begin / 4 + 8; // numéro de la ligne où le RV termine (le -1 indique qu'on ne commence pas le dernier quart d'heure)
     date = date.addDays(-1);
     date.setTime(QTime(hour, minute, 0, 0));
-    qDebug() << date.date();
-    qDebug() << date.time();
 
     return date;
 }
