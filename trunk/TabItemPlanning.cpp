@@ -47,10 +47,10 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
     // on prépare le header vertical
     for(int i = 8; i < 20; ++i){ // 8h - 20h
         QString hour = QString::number(i);
-        hours   << hour + "h00 - " + hour + "h15"
-                << hour + "h15 - " + hour + "h30"
-                << hour + "h30 - " + hour + "h45"
-                << hour + "h45 - " + QString::number(i+1) + "h00";
+        hours   << hour + "h00"
+                << hour + "h15"
+                << hour + "h30"
+                << hour + "h45";
     }
 
     colours = new QList<QColor>();
@@ -396,5 +396,6 @@ void TabItemPlanning::resizeEvent(QResizeEvent * event)
 
 void TabItemPlanning::addMeeting(){
     MeetingActions *meeting = new MeetingActions(ADD, this);
+    connect(meeting, SIGNAL(notifyRefreshList()), this, SLOT(refreshList()));
     meeting->exec();
 }
