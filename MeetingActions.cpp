@@ -11,6 +11,8 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 
     dt_begin = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_begin->setDisplayFormat("dd/MM/yyyy hh:mm");
+    dt_begin2 = new QDateTimeEdit(QDateTime::currentDateTime());
+    dt_begin2->setDisplayFormat("dd/MM/yyyy hh:mm");
     dt_end = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_end->setDisplayFormat("dd/MM/yyyy hh:mm");
 
@@ -47,10 +49,21 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     fl_data->addRow("Salle:", cb_room);
     fl_data->addRow("Equipement(s):", list_equipments);
 
-    btn_find = new QPushButton("Trouver un horaire");
-    btn_check = new QPushButton("Simulation");
+    btn_findHour = new QPushButton("Chercher");
+    btn_findRoom = new QPushButton("Chercher");
     btn_action = new QPushButton("Valider");
     btn_cancel = new QPushButton("&Annuler");
+
+    qgb_room = new QGroupBox("Recherche de salle");
+    qgb_hour = new QGroupBox("Recherche de crénau");
+    qgb_option = new QGroupBox("Autres options");
+
+    qcb_guest = new QCheckBox("Adapté au nombre d'invités");
+    qcb_equipment = new QCheckBox("Ayant comme équipements");
+    qcb_extend = new QCheckBox("Recherche extensible sur plusieurs jours");
+    qcb_available = new QCheckBox("Disponibilité des invités nécessaire");
+    qcb_compulsory = new QCheckBox("Présence obligatoire");
+    qcb_recurring = new QCheckBox("Périodique");
 
     if(action == ADD){
         setWindowTitle("Planifier une réunion");
@@ -58,8 +71,8 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 
     QHBoxLayout *layout_buttons = new QHBoxLayout;
     layout_buttons->setAlignment(Qt::AlignRight);
-    layout_buttons->addWidget(btn_find);
-    layout_buttons->addWidget(btn_check);
+    layout_buttons->addWidget(btn_findHour);
+    layout_buttons->addWidget(btn_findRoom);
     layout_buttons->addWidget(btn_action);
     layout_buttons->addWidget(btn_cancel);
 
@@ -72,8 +85,8 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     connect(btn_cancel, SIGNAL(clicked()), this, SLOT(reject()));
     connect(btn_action, SIGNAL(clicked()), this, SLOT(makeAction()));
     connect(cb_room, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBoxEquipment(int)));
-    connect(btn_find, SIGNAL(clicked()), this, SLOT(findHours()));
-    connect(btn_check, SIGNAL(clicked()), this, SLOT(findRoom()));
+    connect(btn_findHour, SIGNAL(clicked()), this, SLOT(findHours()));
+    connect(btn_findRoom, SIGNAL(clicked()), this, SLOT(findRoom()));
 }
 
 void MeetingActions::findHours () {

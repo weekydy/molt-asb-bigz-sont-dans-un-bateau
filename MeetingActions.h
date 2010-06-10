@@ -21,6 +21,7 @@ private:
     
     QLineEdit *le_label;
     QDateTimeEdit *dt_begin;
+    QDateTimeEdit *dt_begin2;
     QDateTimeEdit *dt_end;
 
     CheckBoxList *list_users;
@@ -30,10 +31,21 @@ private:
 
     QFormLayout *fl_data;
 
-    QPushButton *btn_find;
-    QPushButton *btn_check;
+    QPushButton *btn_findHour;
+    QPushButton *btn_findRoom;
     QPushButton *btn_action;
     QPushButton *btn_cancel;
+
+    QGroupBox *qgb_room;
+    QGroupBox *qgb_hour;
+    QGroupBox *qgb_option;
+
+    QCheckBox *qcb_guest;
+    QCheckBox *qcb_equipment;
+    QCheckBox *qcb_extend;
+    QCheckBox *qcb_available;
+    QCheckBox *qcb_compulsory;
+    QCheckBox *qcb_recurring;
 
     SolutionsEngine* engine;
 
