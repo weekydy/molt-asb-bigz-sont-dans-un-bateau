@@ -8,7 +8,7 @@ class ListWidget : public QListWidget
     Q_OBJECT
 
 public:
-    ListWidget(QWidget *parent = 0);
+    ListWidget(QString url, QWidget *parent = 0);
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -18,6 +18,7 @@ protected:
     void dropEvent(QDropEvent *event);
 
 private:
+    QString url;
     void startDrag();
     QPoint startPos;
 

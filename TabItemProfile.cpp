@@ -49,8 +49,8 @@ TabItemProfile::TabItemProfile(int _user_id, QWidget *parent) : QWidget(parent)
     layout_top->addWidget(gb_info);
     layout_top->addWidget(gb_pass);
 
-    lw_left = new ListWidget(this);
-    lw_right = new ListWidget(this);
+    lw_left = new ListWidget("img/group.png", this);
+    lw_right = new ListWidget(":group_not", this);
 
     req->prepare("SELECT * FROM grp WHERE grp_id NOT IN (SELECT g.grp_id FROM belongtogroup bg INNER JOIN grp g ON g.grp_id = bg.grp_id WHERE bg.user_id = :user_id)");
     req->bindValue(":user_id", user_id);
@@ -75,7 +75,7 @@ TabItemProfile::TabItemProfile(int _user_id, QWidget *parent) : QWidget(parent)
     }
 
     btn_to_left = new QPushButton(this);
-    btn_to_right = new QPushButton(this);    
+    btn_to_right = new QPushButton(this);
     btn_to_left->setIcon(QIcon(":to_left.png"));
     btn_to_right->setIcon(QIcon(":to_right.png"));
     btn_to_left->setFixedSize(30, 30);

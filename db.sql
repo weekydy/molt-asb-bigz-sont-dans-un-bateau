@@ -89,14 +89,15 @@ CREATE TABLE message(
 	user_id_from integer,
 	user_id_to integer,
 	msg_date datetime,
+	msg_subject varchar,
 	msg_text text,
 	PRIMARY KEY ('user_id_from', 'user_id_to', 'msg_date'),
 	FOREIGN KEY ('user_id_from') REFERENCES 'user' ('user_id'),
 	FOREIGN KEY ('user_id_to') REFERENCES 'user' ('user_id')
 );
 
-INSERT INTO message VALUES('1', '2', '2010-06-03 20:34', 'Bonjour, je voulais savoir si je pouvais dormir chez vous ce soir ?');
-INSERT INTO message VALUES('2', '3', '2010-06-03 18:43', 'Bonjour, êtes-vous dispo ce weekend pour bosser AG41 ?');
+INSERT INTO message VALUES('1', '2', '2010-06-03 20:34', 'Hello', 'Bonjour, je voulais savoir si je pouvais dormir chez vous ce soir ?');
+INSERT INTO message VALUES('2', '3', '2010-06-03 18:43', 'Test', 'Bonjour, êtes-vous dispo ce weekend pour bosser AG41 ?');
 
 CREATE TABLE haveequipment(
 	room_id integer,

@@ -96,6 +96,8 @@ TabItemNews::TabItemNews(int _user_id, QWidget *parent) : QWidget(parent)
     connect(tab_mail, SIGNAL(currentChanged(int)), this, SLOT(refreshListMail()));
     connect(view_in, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState(QModelIndex)));
     connect(btn_reply, SIGNAL(clicked()), this, SLOT(replyMail()));
+    connect(btn_add, SIGNAL(clicked()), this, SLOT(sendMail()));
+    connect(btn_add2, SIGNAL(clicked()), this, SLOT(sendMail()));
 }
 
 void TabItemNews::refreshListEvent(){
@@ -188,7 +190,7 @@ void TabItemNews::refreshListMail(){
     int debug = 0;
     qDebug() << debug++ << endl;
     QSqlQuery req;
-    req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_name, m.msg_date, m.msg_text FROM message m INNER JOIN user u ON u.user_id = m.user_id_from WHERE user_id_to = :user_id ORDER BY msg_date");
+    req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_from WHERE user_id_to = :user_id ORDER BY msg_date");
     req.bindValue(":user_id", user_id);
     req.exec();
     qDebug() << "user " << user_id << " id";
@@ -196,28 +198,30 @@ void TabItemNews::refreshListMail(){
     model_in->setHeaderData(2, Qt::Horizontal, "Nom");
     model_in->setHeaderData(3, Qt::Horizontal, "Prénom");
     model_in->setHeaderData(4, Qt::Horizontal, "Le");
-    model_in->setHeaderData(5, Qt::Horizontal, "Message");
+    model_in->setHeaderData(5, Qt::Horizontal, "Objet");
 qDebug() << debug++ << endl;
     proxyModel_in->setSourceModel(model_in);
 qDebug() << debug++ << endl;
     view_in->setModel(proxyModel_in);
     view_in->hideColumn(0);
     view_in->hideColumn(1);
+    view_in->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 qDebug() << debug++ << endl;
-    req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_text FROM message m INNER JOIN user u ON u.user_id = m.user_id_to WHERE user_id_from = :user_id ORDER BY msg_date");
+    req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_to WHERE user_id_from = :user_id ORDER BY msg_date");
     req.bindValue(":user_id", user_id);
     req.exec();
     model_out->setQuery(req);
     model_out->setHeaderData(2, Qt::Horizontal, "Nom");
     model_out->setHeaderData(3, Qt::Horizontal, "Prénom");
     model_out->setHeaderData(4, Qt::Horizontal, "Le");
-    model_out->setHeaderData(5, Qt::Horizontal, "Message");
+    model_out->setHeaderData(5, Qt::Horizontal, "Objet");
 qDebug() << debug++ << endl;
     proxyModel_out->setSourceModel(model_out);
 qDebug() << debug++ << endl;
     view_out->setModel(proxyModel_out);
     view_out->hideColumn(0);
     view_out->hideColumn(1);
+    view_in->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
 void TabItemNews::refreshButtonState(QModelIndex index){
@@ -244,5 +248,7 @@ void TabItemNews::replyMail(){
 }
 
 void TabItemNews::sendMail(){
-
+    SendMail *mailAdd = new SendMail(user_id, -1, this);
+    connect(mailAdd, SIGNAL(notifyRefreshList()), this, SLOT(refreshListMail()));
+    mailAdd->exec();
 }

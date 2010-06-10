@@ -5,6 +5,7 @@
 #include <QtCore>
 #include <QtSql>
 
+#include "ListWidget.h"
 #include "Commons.h"
 
 class SendMail : public QDialog
@@ -19,10 +20,17 @@ private:
     int user_id_to;
 
     QLabel *lbl_to;
+    QLineEdit *le_subject;
     QTextEdit *te_message;
 
     QPushButton *btn_action;
     QPushButton *btn_cancel;
+
+    ListWidget *lw_groups;
+    ListWidget *lw_users;
+    ListWidget *lw_targets;
+
+    void moveCurrentItem(ListWidget *source, ListWidget *target);
 
 private slots:
     void makeAction();
