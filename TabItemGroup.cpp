@@ -19,7 +19,7 @@ TabItemGroup::TabItemGroup(QWidget *parent) : QWidget(parent)
     view->verticalHeader()->hide();
     view->setSelectionBehavior(QAbstractItemView::SelectRows);
     view->setSelectionMode(QAbstractItemView::SingleSelection);
-    view->setAlternatingRowColors(true);
+    //view->setAlternatingRowColors(true);
     view->setSortingEnabled (true);
     view->setContextMenuPolicy(Qt::CustomContextMenu);
 

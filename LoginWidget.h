@@ -24,7 +24,7 @@ private:
     QCheckBox *cb_remember;
 
     QSettings *settings;
-    //void keyPressEvent(QKeyEvent *keyEvent);
+    void keyPressEvent(QKeyEvent *keyEvent);
 
 private slots:
     void connection();
