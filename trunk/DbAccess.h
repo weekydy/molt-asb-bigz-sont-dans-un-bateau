@@ -4,8 +4,6 @@
 #include <QSqlDatabase>
 #include <QDebug>
 
-#include "dbAccess.h"
-
 using namespace std;
 
 class DbAccess

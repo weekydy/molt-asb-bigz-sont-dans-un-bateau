@@ -53,18 +53,20 @@ SendMail::SendMail(int _user_id_from, int _user_id_to, QWidget *parent) : QDialo
         rec = req->record();
         while(req->next()){
             QListWidgetItem *item = new QListWidgetItem();
-            item->setData(Qt::DisplayRole, req->value(rec.indexOf("grp_id")).toInt());
-            item->setText(req->value(rec.indexOf("grp_name")).toString());
+            item->setData(Qt::UserRole, req->value(rec.indexOf("grp_id")));
+            item->setText("[GROUPE] " + req->value(rec.indexOf("grp_name")).toString());
             lw_groups->addItem(item);
+            qDebug() << "numero : " << item->data(Qt::UserRole).toInt();
         }
         req->prepare("SELECT * FROM user ORDER BY user_surname, user_name");
         req->exec();
         rec = req->record();
         while(req->next()){
             QListWidgetItem *item = new QListWidgetItem();
-            item->setData(Qt::DisplayRole, req->value(rec.indexOf("grp_id")).toInt());
+            item->setData(Qt::UserRole, req->value(rec.indexOf("user_id")));
             item->setText(req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString());
             lw_users->addItem(item);
+            qDebug() << "numero : " << item->data(Qt::UserRole).toInt();
         }
 
         QLabel *lb_group = new QLabel("Groupes :");
@@ -140,6 +142,50 @@ void SendMail::makeAction(){
             else{
                 QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
             }
+        }
+        else{
+            QMessageBox::warning(this, "Action Impossible", "Veuillez remplir les champs vides :\n"+missingFields);
+        }
+    }
+    else
+    {
+        QString missingFields("");
+        if(te_message->toPlainText() == "") missingFields += "Message ; ";
+        if(le_subject->text() == "") missingFields += "Sujet ; ";
+        if(lw_targets->count() == 0) missingFields += "Destinataire(s) ;";
+
+        if (missingFields == ""){ // Si tout a été saisi
+            QSet<int> list_users_id;
+            for(int i = 0; i < lw_targets->count(); i++)
+            {
+                QSqlQuery *req = new QSqlQuery();
+
+                QListWidgetItem *item = lw_targets->item(i);
+
+                if(lw_targets->item(i)->text().contains("[GROUPE] ")) // groupe
+                {
+                    QString grp_name = lw_targets->item(i)->text().replace("[GROUPE ", "");
+                    qDebug() << grp_name;
+                    req->prepare("SELECT  FROM belongtogroup WHERE grp_id = :grp_id");
+                    req->bindValue(":grp_id", lw_targets->item(i)->data(Qt::UserRole).toInt());
+                    req->exec();
+                    while(req->next())
+                    {
+                        if(!list_users_id.contains(req->value(1).toInt()))
+                        {
+                            list_users_id.insert(req->value(1).toInt());
+                        }
+                    }
+                }
+                else
+                {
+                    if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
+                    {
+                        list_users_id.insert(req->value(1).toInt());
+                    }
+                }
+            }
+            qDebug() << list_users_id;
         }
         else{
             QMessageBox::warning(this, "Action Impossible", "Veuillez remplir les champs vides :\n"+missingFields);
