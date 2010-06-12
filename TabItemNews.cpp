@@ -187,26 +187,25 @@ void TabItemNews::declineMeeting(int id_meeting){
 }
 
 void TabItemNews::refreshListMail(){
-    int debug = 0;
-    qDebug() << debug++ << endl;
+
     QSqlQuery req;
     req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_from WHERE user_id_to = :user_id ORDER BY msg_date");
     req.bindValue(":user_id", user_id);
     req.exec();
-    qDebug() << "user " << user_id << " id";
+
     model_in->setQuery(req);
     model_in->setHeaderData(2, Qt::Horizontal, "Nom");
     model_in->setHeaderData(3, Qt::Horizontal, "Prénom");
     model_in->setHeaderData(4, Qt::Horizontal, "Le");
     model_in->setHeaderData(5, Qt::Horizontal, "Objet");
-qDebug() << debug++ << endl;
+
     proxyModel_in->setSourceModel(model_in);
-qDebug() << debug++ << endl;
+
     view_in->setModel(proxyModel_in);
     view_in->hideColumn(0);
     view_in->hideColumn(1);
     view_in->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-qDebug() << debug++ << endl;
+
     req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_to WHERE user_id_from = :user_id ORDER BY msg_date");
     req.bindValue(":user_id", user_id);
     req.exec();
@@ -215,9 +214,9 @@ qDebug() << debug++ << endl;
     model_out->setHeaderData(3, Qt::Horizontal, "Prénom");
     model_out->setHeaderData(4, Qt::Horizontal, "Le");
     model_out->setHeaderData(5, Qt::Horizontal, "Objet");
-qDebug() << debug++ << endl;
+
     proxyModel_out->setSourceModel(model_out);
-qDebug() << debug++ << endl;
+
     view_out->setModel(proxyModel_out);
     view_out->hideColumn(0);
     view_out->hideColumn(1);
