@@ -27,10 +27,10 @@ SOURCES += main.cpp \
     TabItemGroup.cpp \
     TabItemGroupActions.cpp \
     TabItemProfile.cpp \
-    ListWidget.cpp \
     Smtp.cpp \
     SendMail.cpp \
-    MessageBox.cpp
+    MessageBox.cpp \
+    ListWidget.cpp
 HEADERS += MainWindow.h \
     LoginWidget.h \
     DbAccess.h \

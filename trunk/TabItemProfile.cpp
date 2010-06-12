@@ -49,8 +49,8 @@ TabItemProfile::TabItemProfile(int _user_id, QWidget *parent) : QWidget(parent)
     layout_top->addWidget(gb_info);
     layout_top->addWidget(gb_pass);
 
-    lw_left = new ListWidget("img/group.png", this);
-    lw_right = new ListWidget(":group_not", this);
+    lw_left = new ListWidget(":group.png", this);
+    lw_right = new ListWidget(":group_not.png", this);
 
     req->prepare("SELECT * FROM grp WHERE grp_id NOT IN (SELECT g.grp_id FROM belongtogroup bg INNER JOIN grp g ON g.grp_id = bg.grp_id WHERE bg.user_id = :user_id)");
     req->bindValue(":user_id", user_id);

@@ -44,7 +44,7 @@ SendMail::SendMail(int _user_id_from, int _user_id_to, QWidget *parent) : QDialo
     else{
         lw_groups = new ListWidget(":group.png", this);
         lw_users = new ListWidget(":person.png", this);
-        lw_targets = new ListWidget(":group_not.png", this);
+        lw_targets = new ListWidget(":person_not.png", this);
 
         QSqlQuery *req = new QSqlQuery();
         QSqlRecord rec;

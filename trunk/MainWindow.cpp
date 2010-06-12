@@ -177,7 +177,7 @@ void MainWindow::createSignalsSlots(){
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
-    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir quitter l'application ?", QMessageBox::Yes | QMessageBox::No);
+    int rep = QMessageBox::information(this, "Confirmation", "Etes-vous sûr de vouloir quitter l'application ?", QMessageBox::Yes | QMessageBox::No);
     if (rep == QMessageBox::Yes){
         event->accept();
     }
