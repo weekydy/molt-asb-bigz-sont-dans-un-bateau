@@ -66,7 +66,7 @@ void ListWidget::startDrag()
 
         QDrag *drag = new QDrag(this);
         drag->setMimeData(mimeData);
-        drag->setPixmap(QPixmap(":group.png"));
+        drag->setPixmap(QPixmap(url));
         if (drag->start(Qt::MoveAction) == Qt::MoveAction){
             delete item;
             emit notifyNewItem();

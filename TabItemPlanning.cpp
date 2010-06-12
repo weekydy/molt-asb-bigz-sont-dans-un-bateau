@@ -27,7 +27,7 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
     model = new QStandardItemModel();
     view = new QTableView();
     view->setEditTriggers(QAbstractItemView::NoEditTriggers); // pas d'édition
-    //view->setFocusPolicy(Qt::NoFocus); // pas de sélection bleue
+    view->setFocusPolicy(Qt::NoFocus); // pas de sélection bleue
     view->setSelectionMode(QAbstractItemView::SingleSelection);
 
 
@@ -165,7 +165,7 @@ void TabItemPlanning::refreshList(){
                 model->setItem(noRow_b + pos, 0, item);
             }
 
-            view->setSpan(noRow_b, 0, duration, 0);
+            view->setSpan(noRow_b, 0, duration, 1);
 
             colour++;
         }
@@ -232,7 +232,7 @@ void TabItemPlanning::refreshList(){
                     model->setItem(noRow_b + pos, noCol, item);
                 }
 
-                view->setSpan(noRow_b, noCol, duration, 0);
+                view->setSpan(noRow_b, noCol, duration, 1);
 
                 colour++;
             }
