@@ -10,6 +10,11 @@ QMessageBox
 	border: 3px solid #528595;
 	background: QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255))
 }
+QDialog
+{
+	border: 3px solid #528595;
+	background: QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255))
+}
 
 /* Line Edit */
 QLineEdit {
@@ -47,6 +52,10 @@ QPushButton:hover
 QPushButton:pressed
 {
 	background-color : QLinearGradient(spread:pad, x1:1, y1:1, x2:1, y2:0, stop:0 rgba(189, 232, 255, 255), stop:0.517588 rgba(0, 122, 183, 255), stop:0.527638 rgba(0, 49, 74, 255), stop:1 rgba(1, 164, 214, 255));
+}
+QPushButton:disabled
+{
+	background-color : qlineargradient(spread:reflect, x1:0.532, y1:0, x2:0.528, y2:1, stop:0 rgba(232, 235, 249, 255), stop:1 rgba(85, 94, 94, 255));
 }
 
 /* Menus */
