@@ -35,15 +35,20 @@ private:
     QPushButton *btn_add;
     QPushButton *btn_add2;
     QPushButton *btn_reply;
+    QPushButton *btn_del;
+    QPushButton *btn_del2;
 
 private slots:
     void refreshListEvent();
     void refreshListMail();
     void acceptMeeting(int id_meeting);
     void declineMeeting(int id_meeting);
-    void refreshButtonState(QModelIndex index);
+    void refreshButtonState_in(QModelIndex index);
+    void refreshButtonState_out(QModelIndex index);
     void replyMail();
     void sendMail();
+    void deleteItem_in();
+    void deleteItem_out();
 };
 
 #endif // TABITEMROOM_H

@@ -51,7 +51,10 @@ void ListWidget::dropEvent(QDropEvent *event)
     ListWidget *source =
             qobject_cast<ListWidget *>(event->source());
     if (source && source != this) {
-        addItem(event->mimeData()->text());
+        QListWidgetItem *item = new QListWidgetItem();
+        item->setText(event->mimeData()->text());
+        item->setData(Qt::UserRole, event->mimeData()->data("id").toInt());
+        addItem(item);
         event->setDropAction(Qt::MoveAction);
         event->accept();
     }
@@ -63,6 +66,7 @@ void ListWidget::startDrag()
     if (item) {
         QMimeData *mimeData = new QMimeData;
         mimeData->setText(item->text());
+        mimeData->setData("id", item->data(Qt::UserRole).toByteArray());
 
         QDrag *drag = new QDrag(this);
         drag->setMimeData(mimeData);
