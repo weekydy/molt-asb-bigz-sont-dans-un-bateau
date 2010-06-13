@@ -251,31 +251,35 @@ void MeetingActions::findRoom () {
 
 void MeetingActions::makeAction(){
 
-    //Requette retournant toutes les réunions à un jour donné
-    QSqlQuery *req = new QSqlQuery();
-    req->prepare("INSERT INTO meeting VALUES (null, '2', :begin, :end, :label, '0')");
-    req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
-    req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
-    req->bindValue(":label", le_label->text());
-    req->exec();
-
-    req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");
-    req->exec();
-    req->first();
-
-    QSqlQuery *req2 = new QSqlQuery();
-    req2->prepare("INSERT INTO havemeeting VALUES (:meeting, '2', '0')");
-    req2->bindValue(":meeting", req->value(0).toString());
-    req2->exec();
-
-    emit notifyRefreshList();
-
     QString missingFields("");
     if(le_label->text() == "") missingFields += "Libellé ; ";
     if(dt_begin->text() == "") missingFields += "Horaire début ; ";
     if(dt_end->text() == "") missingFields += "Horaire fin ; ";
 
-    if (missingFields == ""){ // Si tout a été saisi
+    if (missingFields == ""){
+        //Requette retournant toutes les réunions à un jour donné
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, '0')");
+        req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
+        req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
+        req->bindValue(":label", le_label->text());
+        req->bindValue(":room", cb_room->currentIndex());
+        req->exec();
+
+        req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");
+        req->exec();
+        req->first();
+
+        QSqlQuery *req2 = new QSqlQuery();
+        req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '0')");
+        req2->bindValue(":meeting", req->value(0).toString());
+        req2->bindValue(":id", id);
+        req2->exec();
+
+        emit notifyRefreshList();
+
+        accept();
+                // Si tout a été saisi
         /*
         QMap<QString, bool> map_list;
         for(int i = 0; i < list->count(); ++i){
