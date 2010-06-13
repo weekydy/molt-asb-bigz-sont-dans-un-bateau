@@ -7,6 +7,7 @@
 
 #include "Commons.h"
 #include "SendMail.h"
+#include "MailDetails.h"
 
 class TabItemNews : public QWidget
 {
@@ -49,6 +50,8 @@ private slots:
     void sendMail();
     void deleteItem_in();
     void deleteItem_out();
+    void displayMail_in();
+    void displayMail_out();
 };
 
 #endif // TABITEMROOM_H

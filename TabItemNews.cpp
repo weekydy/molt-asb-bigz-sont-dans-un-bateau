@@ -103,6 +103,8 @@ TabItemNews::TabItemNews(int _user_id, QWidget *parent) : QWidget(parent)
     connect(btn_add2, SIGNAL(clicked()), this, SLOT(sendMail()));
     connect(btn_del, SIGNAL(clicked()), this, SLOT(deleteItem_out()));
     connect(btn_del2, SIGNAL(clicked()), this, SLOT(deleteItem_in()));
+    connect(view_in, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(displayMail_in()));
+    connect(view_out, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(displayMail_out()));
 }
 
 void TabItemNews::refreshListEvent(){
@@ -259,15 +261,17 @@ void TabItemNews::replyMail(){
     index = index.sibling(index.row(), 0);
     if (index.row() != -1){
         int user_id_to = proxyModel_in->data(index).toInt();
+        index = index.sibling(index.row(), 6);
+        QString subject = proxyModel_in->data(index).toString();
 
-        SendMail *mailAdd = new SendMail(user_id, user_id_to, this);
+        SendMail *mailAdd = new SendMail(user_id, user_id_to, subject, this);
         connect(mailAdd, SIGNAL(notifyRefreshList()), this, SLOT(refreshListMail()));
         mailAdd->exec();
     }
 }
 
 void TabItemNews::sendMail(){
-    SendMail *mailAdd = new SendMail(user_id, -1, this);
+    SendMail *mailAdd = new SendMail(user_id, -1, "", this);
     connect(mailAdd, SIGNAL(notifyRefreshList()), this, SLOT(refreshListMail()));
     mailAdd->exec();
 }
@@ -300,6 +304,8 @@ void TabItemNews::deleteItem_in(){
     }
 }
 
+
+
 void TabItemNews::deleteItem_out(){
     QModelIndex index = view_out->selectionModel()->currentIndex();
     index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
@@ -325,5 +331,36 @@ void TabItemNews::deleteItem_out(){
             else
                 QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
         }
+    }
+}
+
+void TabItemNews::displayMail_in(){
+    QModelIndex index = view_in->selectionModel()->currentIndex();
+    index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
+    if (index.row() != -1){
+        int user_id_from = proxyModel_in->data(index).toInt();
+        index = index.sibling(index.row(), 1);
+        int user_id_to = proxyModel_in->data(index).toInt();
+        index = index.sibling(index.row(), 5);
+        QString date = proxyModel_in->data(index).toString();
+
+        MailDetails *mail_details = new MailDetails(user_id_from, user_id_to, date, this);
+        mail_details->exec();
+
+    }
+}
+
+void TabItemNews::displayMail_out(){
+    QModelIndex index = view_out->selectionModel()->currentIndex();
+    index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
+    if (index.row() != -1){
+        int user_id_from = proxyModel_out->data(index).toInt();
+        index = index.sibling(index.row(), 1);
+        int user_id_to = proxyModel_out->data(index).toInt();
+        index = index.sibling(index.row(), 5);
+        QString date = proxyModel_out->data(index).toString();
+
+        MailDetails *mail_details = new MailDetails(user_id_from, user_id_to, date, this);
+        mail_details->exec();
     }
 }
