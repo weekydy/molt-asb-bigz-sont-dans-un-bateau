@@ -395,7 +395,7 @@ void TabItemPlanning::resizeEvent(QResizeEvent * event)
 }*/
 
 void TabItemPlanning::addMeeting(){
-    MeetingActions *meeting = new MeetingActions(ADD, this);
+    MeetingActions *meeting = new MeetingActions(ADD, this, user_id);
     connect(meeting, SIGNAL(notifyRefreshList()), this, SLOT(refreshList()));
     meeting->exec();
 }

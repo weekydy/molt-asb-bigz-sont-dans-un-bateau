@@ -169,17 +169,18 @@ void MeetingActions::findHours () {
     liste.append(1);
     liste.append(2);
     liste.append(3);
-    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), 2, liste, available, extend);
+    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), cb_room->currentIndex(), liste, available, extend);
     if (qdt.time().hour() == 0) {
         QString text_result = "Aucune date ne correspond à votre recherche.";
         QMessageBox::information(this, "Résultat de la recherche", text_result);
-        dt_begin->setDateTime(qdt);
-        dt_end->setDateTime(qdt);
-        dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
+
     }
     else {
         QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
         QMessageBox::information(this, "Résultat de la recherche", text_result);
+        dt_begin->setDateTime(qdt);
+        dt_end->setDateTime(qdt);
+        dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
     }
 }
 
@@ -188,37 +189,44 @@ void MeetingActions::findRoom () {
     //bool guest = qcb_guest->isChecked();
     //bool equipment = qcb_equipment->isChecked();
     int id_room = engine->findRoom(nb);
+    cb_room->setCurrentIndex(id_room);
     QString text_result = "La salle " + QString::number(id_room) + " est faite pour vous.";
-    QMessageBox::information(this, "Résultat de la recherche", text_result);
+    QMessageBox::information(this, "Résultat de la recherche", text_result);    
 }
 
 void MeetingActions::makeAction(){
-
-    //Requette retournant toutes les réunions à un jour donné
-    QSqlQuery *req = new QSqlQuery();
-    req->prepare("INSERT INTO meeting VALUES (null, '2', :begin, :end, :label, '0')");
-    req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
-    req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
-    req->bindValue(":label", le_label->text());
-    req->exec();
-
-    req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");
-    req->exec();
-    req->first();
-
-    QSqlQuery *req2 = new QSqlQuery();
-    req2->prepare("INSERT INTO havemeeting VALUES (:meeting, '2', '0')");
-    req2->bindValue(":meeting", req->value(0).toString());
-    req2->exec();
-
-    emit notifyRefreshList();
 
     QString missingFields("");
     if(le_label->text() == "") missingFields += "Libellé ; ";
     if(dt_begin->text() == "") missingFields += "Horaire début ; ";
     if(dt_end->text() == "") missingFields += "Horaire fin ; ";
 
-    if (missingFields == ""){ // Si tout a été saisi
+    if (missingFields == ""){
+
+        //Requette retournant toutes les réunions à un jour donné
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, '0')");
+        req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
+        req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
+        req->bindValue(":label", le_label->text());
+        req->bindValue(":room", cb_room->currentIndex());
+        req->exec();
+
+        req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");
+        req->exec();
+        req->first();
+
+        QSqlQuery *req2 = new QSqlQuery();
+        req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '0')");
+        req2->bindValue(":meeting", req->value(0).toString());
+        req2->bindValue(":id", id);
+        req2->exec();
+
+        emit notifyRefreshList();
+
+        accept();
+
+     // Si tout a été saisi
         /*
         QMap<QString, bool> map_list;
         for(int i = 0; i < list->count(); ++i){
@@ -339,7 +347,7 @@ void MeetingActions::makeAction(){
     else{
         QMessageBox::warning(this, "Action Impossible", "Veuillez remplir les champs vides :\n"+missingFields);
     }
-    accept();
+
 
 }
 
