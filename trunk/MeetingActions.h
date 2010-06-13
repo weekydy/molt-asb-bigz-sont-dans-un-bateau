@@ -8,6 +8,7 @@
 #include "Commons.h"
 #include "CheckBoxList.h"
 #include "SolutionsEngine.h"
+#include "ListWidget.h"
 
 class MeetingActions : public QDialog
 {
@@ -26,7 +27,10 @@ private:
 
     QTimeEdit *qte_duration;
 
-    CheckBoxList *list_users;
+    //CheckBoxList *list_users;
+    ListWidget *lw_groups;
+    ListWidget *lw_users;
+    ListWidget *lw_targets;
 
     QComboBox *cb_room;
     QComboBox *list_equipments;
@@ -53,6 +57,8 @@ private:
     QCheckBox *qcb_compulsory;
 
     SolutionsEngine* engine;
+
+    void moveCurrentItem(ListWidget *source, ListWidget *target);
 
 private slots:
     void makeAction();
