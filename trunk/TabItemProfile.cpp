@@ -58,7 +58,7 @@ TabItemProfile::TabItemProfile(int _user_id, QWidget *parent) : QWidget(parent)
     rec = req->record();
     while(req->next()){
         QListWidgetItem *item = new QListWidgetItem();
-        item->setData(Qt::DisplayRole, req->value(rec.indexOf("grp_id")).toInt());
+        item->setData(Qt::UserRole, req->value(rec.indexOf("grp_id")).toInt());
         item->setText(req->value(rec.indexOf("grp_name")).toString());
         lw_left->addItem(item);
     }
@@ -69,7 +69,7 @@ TabItemProfile::TabItemProfile(int _user_id, QWidget *parent) : QWidget(parent)
     rec = req->record();
     while(req->next()){
         QListWidgetItem *item = new QListWidgetItem();
-        item->setData(Qt::DisplayRole, req->value(rec.indexOf("grp_id")).toInt());
+        item->setData(Qt::UserRole, req->value(rec.indexOf("grp_id")).toInt());
         item->setText(req->value(rec.indexOf("grp_name")).toString());
         lw_right->addItem(item);
     }
@@ -167,17 +167,9 @@ void TabItemProfile::updateGroups(){
     qDebug() << "nb row " << lw_right->count();
 
     for(int i = 0; i < lw_right->count(); i++){
-        QString grp_name = lw_right->item(i)->text();
-
-        req->prepare("SELECT * FROM grp WHERE grp_name = :grp_name");
-        req->bindValue(":grp_name", grp_name);
-        req->exec();
-        req->first();
-
-        int grp_id = req->value(0).toInt();
 
         req->prepare("INSERT INTO belongtogroup VALUES(:grp_id, :user_id)");
-        req->bindValue(":grp_id", grp_id);
+        req->bindValue(":grp_id", lw_right->item(i)->data(Qt::UserRole));
         req->bindValue(":user_id", user_id);
         req->exec();
     }

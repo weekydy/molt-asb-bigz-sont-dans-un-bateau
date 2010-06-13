@@ -17,12 +17,7 @@ TabItemNews::TabItemNews(int _user_id, QWidget *parent) : QWidget(parent)
 
     refreshListEvent();
 
-
-
-
-
     lb_message_mail = new QLabel("Boîte mails");
-
 
     view_in = new QTableView();
     view_in->setDragEnabled(true);
@@ -48,28 +43,37 @@ TabItemNews::TabItemNews(int _user_id, QWidget *parent) : QWidget(parent)
 
     btn_add = new QPushButton("Nouveau");
     btn_add->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    btn_add2 = new QPushButton("Nouveau");    
+    btn_add2 = new QPushButton("Nouveau");
     btn_reply = new QPushButton("Répondre");
     btn_reply->setDisabled(true);
+    btn_del = new QPushButton("Supprimer");
+    btn_del->setDisabled(true);
+    btn_del2 = new QPushButton("Supprimer");
+    btn_del2->setDisabled(true);
+
+    QHBoxLayout *layout_btn2 = new QHBoxLayout();
+    layout_btn2->addWidget(btn_add2);
+    layout_btn2->addWidget(btn_reply);
+    layout_btn2->addWidget(btn_del2);
+    layout_btn2->addStretch();
 
     QHBoxLayout *layout_btn = new QHBoxLayout();
-    layout_btn->addWidget(btn_add2);
-    layout_btn->addWidget(btn_reply);
+    layout_btn->addWidget(btn_add);
+    layout_btn->addWidget(btn_del);
     layout_btn->addStretch();
 
     QWidget *tab_inbox = new QWidget();
 
     QVBoxLayout *layout_inbox = new QVBoxLayout();
-    layout_inbox->addLayout(layout_btn);
+    layout_inbox->addLayout(layout_btn2);
     layout_inbox->addWidget(view_in);
 
     tab_inbox->setLayout(layout_inbox);
 
-
     QWidget *tab_sent = new QWidget();
 
     QVBoxLayout *layout_sent = new QVBoxLayout();
-    layout_sent->addWidget(btn_add);
+    layout_sent->addLayout(layout_btn);
     layout_sent->addWidget(view_out);
 
     tab_sent->setLayout(layout_sent);
@@ -81,7 +85,6 @@ TabItemNews::TabItemNews(int _user_id, QWidget *parent) : QWidget(parent)
     model_in = new QSqlQueryModel();
     model_out = new QSqlQueryModel();
 
-
     refreshListMail();
 
     QVBoxLayout *layout_main = new QVBoxLayout();
@@ -92,12 +95,14 @@ TabItemNews::TabItemNews(int _user_id, QWidget *parent) : QWidget(parent)
 
     setLayout(layout_main);
 
-    connect(view_in, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState(QModelIndex)));
+    connect(view_in, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState_in(QModelIndex)));
     connect(tab_mail, SIGNAL(currentChanged(int)), this, SLOT(refreshListMail()));
-    connect(view_in, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState(QModelIndex)));
+    connect(view_out, SIGNAL(clicked(QModelIndex)), this, SLOT(refreshButtonState_out(QModelIndex)));
     connect(btn_reply, SIGNAL(clicked()), this, SLOT(replyMail()));
     connect(btn_add, SIGNAL(clicked()), this, SLOT(sendMail()));
     connect(btn_add2, SIGNAL(clicked()), this, SLOT(sendMail()));
+    connect(btn_del, SIGNAL(clicked()), this, SLOT(deleteItem_out()));
+    connect(btn_del2, SIGNAL(clicked()), this, SLOT(deleteItem_in()));
 }
 
 void TabItemNews::refreshListEvent(){
@@ -189,48 +194,63 @@ void TabItemNews::declineMeeting(int id_meeting){
 void TabItemNews::refreshListMail(){
 
     QSqlQuery req;
-    req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_from WHERE user_id_to = :user_id ORDER BY msg_date");
+    req.prepare("SELECT m.user_id_from, m.user_id_to, m.msg_from, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_from WHERE user_id_to = :user_id AND m.msg_from = '0' ORDER BY msg_date DESC");
     req.bindValue(":user_id", user_id);
     req.exec();
 
     model_in->setQuery(req);
-    model_in->setHeaderData(2, Qt::Horizontal, "Nom");
-    model_in->setHeaderData(3, Qt::Horizontal, "Prénom");
-    model_in->setHeaderData(4, Qt::Horizontal, "Le");
-    model_in->setHeaderData(5, Qt::Horizontal, "Objet");
+    model_in->setHeaderData(3, Qt::Horizontal, "Nom");
+    model_in->setHeaderData(4, Qt::Horizontal, "Prénom");
+    model_in->setHeaderData(5, Qt::Horizontal, "Le");
+    model_in->setHeaderData(6, Qt::Horizontal, "Objet");
 
     proxyModel_in->setSourceModel(model_in);
 
     view_in->setModel(proxyModel_in);
     view_in->hideColumn(0);
     view_in->hideColumn(1);
+    view_in->hideColumn(2);
     view_in->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
-    req.prepare("SELECT m.user_id_from, m.user_id_to, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_to WHERE user_id_from = :user_id ORDER BY msg_date");
+    req.prepare("SELECT m.user_id_from, m.user_id_to, m.msg_from, u.user_surname, u.user_name, m.msg_date, m.msg_subject FROM message m INNER JOIN user u ON u.user_id = m.user_id_to WHERE user_id_from = :user_id AND msg_from = '1' ORDER BY msg_date DESC");
     req.bindValue(":user_id", user_id);
     req.exec();
     model_out->setQuery(req);
-    model_out->setHeaderData(2, Qt::Horizontal, "Nom");
-    model_out->setHeaderData(3, Qt::Horizontal, "Prénom");
-    model_out->setHeaderData(4, Qt::Horizontal, "Le");
-    model_out->setHeaderData(5, Qt::Horizontal, "Objet");
+    model_out->setHeaderData(3, Qt::Horizontal, "Nom");
+    model_out->setHeaderData(4, Qt::Horizontal, "Prénom");
+    model_out->setHeaderData(5, Qt::Horizontal, "Le");
+    model_out->setHeaderData(6, Qt::Horizontal, "Objet");
 
     proxyModel_out->setSourceModel(model_out);
 
     view_out->setModel(proxyModel_out);
     view_out->hideColumn(0);
     view_out->hideColumn(1);
+    view_out->hideColumn(2);
     view_in->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 }
 
-void TabItemNews::refreshButtonState(QModelIndex index){
+void TabItemNews::refreshButtonState_in(QModelIndex index){
     if(index.isValid())
     {
         btn_reply->setDisabled(false);
+        btn_del2->setDisabled(false);
     }
     else
     {
         btn_reply->setDisabled(true);
+        btn_del2->setDisabled(true);
+    }
+}
+
+void TabItemNews::refreshButtonState_out(QModelIndex index){
+    if(index.isValid())
+    {
+        btn_del->setDisabled(false);
+    }
+    else
+    {
+        btn_del->setDisabled(true);
     }
 }
 
@@ -250,4 +270,60 @@ void TabItemNews::sendMail(){
     SendMail *mailAdd = new SendMail(user_id, -1, this);
     connect(mailAdd, SIGNAL(notifyRefreshList()), this, SLOT(refreshListMail()));
     mailAdd->exec();
+}
+
+void TabItemNews::deleteItem_in(){
+    QModelIndex index = view_in->selectionModel()->currentIndex();
+    index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
+    if (index.row() != -1){
+        int user_id_from = proxyModel_in->data(index).toInt();
+        index = index.sibling(index.row(), 1);
+        int user_id_to = proxyModel_in->data(index).toInt();
+        index = index.sibling(index.row(), 5);
+        QString date = proxyModel_in->data(index).toString();
+
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("DELETE FROM message WHERE user_id_from = :user_id_from AND user_id_to = :user_id_to AND msg_date = :date AND msg_from = '0'");
+        req->bindValue(":user_id_from", user_id_from);
+        req->bindValue(":user_id_to", user_id_to);
+        req->bindValue(":date", date);
+
+        int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer ce message ?", QMessageBox::Yes | QMessageBox::No);
+        if(rep == QMessageBox::Yes){
+            if (req->exec()){
+                refreshListMail();
+                QMessageBox::information(this, "Requête exécutée avec succès !", "Le message a été supprimé !");
+            }
+            else
+                QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
+        }
+    }
+}
+
+void TabItemNews::deleteItem_out(){
+    QModelIndex index = view_out->selectionModel()->currentIndex();
+    index = index.sibling(index.row(), 0); // ici je force le n° de colonne à 0, pour etre sur le premier champ
+    if (index.row() != -1){
+        int user_id_from = proxyModel_out->data(index).toInt();
+        index = index.sibling(index.row(), 1);
+        int user_id_to = proxyModel_out->data(index).toInt();
+        index = index.sibling(index.row(), 5);
+        QString date = proxyModel_out->data(index).toString();
+
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("DELETE FROM message WHERE user_id_from = :user_id_from AND user_id_to = :user_id_to AND msg_date = :date AND msg_from = '1'");
+        req->bindValue(":user_id_from", user_id_from);
+        req->bindValue(":user_id_to", user_id_to);
+        req->bindValue(":date", date);
+
+        int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir supprimer ce message ?", QMessageBox::Yes | QMessageBox::No);
+        if(rep == QMessageBox::Yes){
+            if (req->exec()){
+                refreshListMail();
+                QMessageBox::information(this, "Requête exécutée avec succès !", "Le message a été supprimé !");
+            }
+            else
+                QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
+        }
+    }
 }

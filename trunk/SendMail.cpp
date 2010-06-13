@@ -54,9 +54,8 @@ SendMail::SendMail(int _user_id_from, int _user_id_to, QWidget *parent) : QDialo
         while(req->next()){
             QListWidgetItem *item = new QListWidgetItem();
             item->setData(Qt::UserRole, req->value(rec.indexOf("grp_id")));
-            item->setText("[GROUPE] " + req->value(rec.indexOf("grp_name")).toString());
+            item->setText("[GRP] " + req->value(rec.indexOf("grp_name")).toString());
             lw_groups->addItem(item);
-            qDebug() << "numero : " << item->data(Qt::UserRole).toInt();
         }
         req->prepare("SELECT * FROM user ORDER BY user_surname, user_name");
         req->exec();
@@ -64,9 +63,8 @@ SendMail::SendMail(int _user_id_from, int _user_id_to, QWidget *parent) : QDialo
         while(req->next()){
             QListWidgetItem *item = new QListWidgetItem();
             item->setData(Qt::UserRole, req->value(rec.indexOf("user_id")));
-            item->setText(req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString());
+            item->setText("[IND] " + req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString());
             lw_users->addItem(item);
-            qDebug() << "numero : " << item->data(Qt::UserRole).toInt();
         }
 
         QLabel *lb_group = new QLabel("Groupes :");
@@ -126,15 +124,18 @@ void SendMail::makeAction(){
 
             QSqlQuery *req = new QSqlQuery();
 
-            req->prepare("INSERT INTO message VALUES(:user_id_from, :user_id_to, :date, :subject, :message)");
-            qDebug() << user_id_from << " " << user_id_to << endl;
+            req->prepare("INSERT INTO message VALUES(:user_id_from, :user_id_to, :date, :from, :subject, :message)");
             req->bindValue(":user_id_from", user_id_from);
             req->bindValue(":user_id_to", user_id_to);
             req->bindValue(":date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:ss"));
+            req->bindValue(":from", 1);
             req->bindValue(":subject", le_subject->text());
             req->bindValue(":message", te_message->toPlainText());
 
             if(req->exec()){
+                req->bindValue(":from", 0);
+                req->exec();
+
                 emit notifyRefreshList();
                 QMessageBox::information(this, "Requête exécutée avec succès !", "Le message a été envoyé !");
                 accept();
@@ -155,37 +156,57 @@ void SendMail::makeAction(){
         if(lw_targets->count() == 0) missingFields += "Destinataire(s) ;";
 
         if (missingFields == ""){ // Si tout a été saisi
+            QSqlQuery *req = new QSqlQuery();
             QSet<int> list_users_id;
             for(int i = 0; i < lw_targets->count(); i++)
             {
-                QSqlQuery *req = new QSqlQuery();
-
-                QListWidgetItem *item = lw_targets->item(i);
-
-                if(lw_targets->item(i)->text().contains("[GROUPE] ")) // groupe
+                if(lw_targets->item(i)->text().contains("[GRP] "))
                 {
-                    QString grp_name = lw_targets->item(i)->text().replace("[GROUPE ", "");
-                    qDebug() << grp_name;
-                    req->prepare("SELECT  FROM belongtogroup WHERE grp_id = :grp_id");
-                    req->bindValue(":grp_id", lw_targets->item(i)->data(Qt::UserRole).toInt());
+
+                    int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
+                    req->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
+                    req->bindValue(":grp_id", grp_id);
                     req->exec();
+
                     while(req->next())
                     {
-                        if(!list_users_id.contains(req->value(1).toInt()))
-                        {
-                            list_users_id.insert(req->value(1).toInt());
-                        }
+                        if(!list_users_id.contains(req->value(0).toInt()))
+                            list_users_id.insert(req->value(0).toInt());
                     }
                 }
                 else
                 {
                     if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
-                    {
-                        list_users_id.insert(req->value(1).toInt());
-                    }
+                        list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
                 }
             }
-            qDebug() << list_users_id;
+
+            if(list_users_id.contains(user_id_from))
+                list_users_id.remove(user_id_from);
+
+            QString message(te_message->toPlainText());
+            QString subject = "";
+            if(list_users_id.size() > 1)
+                subject += "[Message groupé] ";
+            subject += le_subject->text();
+
+            foreach (int user_id_to, list_users_id)
+            {
+                req->prepare("INSERT INTO message VALUES(:user_id_from, :user_id_to, :msg_date, :msg_from, :msg_subject, :msg_text)");
+                req->bindValue(":user_id_from", user_id_from);
+                req->bindValue(":user_id_to", user_id_to);
+                req->bindValue(":msg_date", QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm"));
+                req->bindValue(":msg_from", 1);
+                req->bindValue(":msg_subject", subject);
+                req->bindValue(":msg_text", message);
+
+                req->exec();
+                req->bindValue(":msg_from", 0);
+                req->exec();
+            }
+            emit notifyRefreshList();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "Le message a été envoyé !");            
+            accept();
         }
         else{
             QMessageBox::warning(this, "Action Impossible", "Veuillez remplir les champs vides :\n"+missingFields);
