@@ -1,11 +1,12 @@
 #include "SendMail.h"
 
-SendMail::SendMail(int _user_id_from, int _user_id_to, QWidget *parent) : QDialog(parent)
+SendMail::SendMail(int _user_id_from, int _user_id_to, QString _subject, QWidget *parent) : QDialog(parent)
 {
     setWindowTitle("Envoyer un message");
 
     user_id_from = _user_id_from;
     user_id_to = _user_id_to;
+    subject = "[RE:] " + _subject;
 
     btn_cancel = new QPushButton("&Annuler");
     btn_action = new QPushButton("Envoyer");
@@ -24,7 +25,7 @@ SendMail::SendMail(int _user_id_from, int _user_id_to, QWidget *parent) : QDialo
         req->first();
         lbl_to = new QLabel(req->value(0).toString() + " " + req->value(1).toString());
         te_message = new QTextEdit();
-        le_subject = new QLineEdit();
+        le_subject = new QLineEdit(subject);
 
 
         QFormLayout *fl_data = new QFormLayout;

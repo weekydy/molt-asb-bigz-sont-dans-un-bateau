@@ -12,12 +12,13 @@ class SendMail : public QDialog
 {
 Q_OBJECT
 public:
-    SendMail(int user_id_from, int user_id_to, QWidget *parent = 0);
+    SendMail(int user_id_from, int user_id_to, QString _subject = "", QWidget *parent = 0);
 
 private:
     int action;
     int user_id_from;
     int user_id_to;
+    QString subject;
 
     QLabel *lbl_to;
     QLineEdit *le_subject;

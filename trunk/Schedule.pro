@@ -30,7 +30,8 @@ SOURCES += main.cpp \
     Smtp.cpp \
     SendMail.cpp \
     MessageBox.cpp \
-    ListWidget.cpp
+    ListWidget.cpp \
+    MailDetails.cpp
 HEADERS += MainWindow.h \
     LoginWidget.h \
     DbAccess.h \
@@ -53,4 +54,5 @@ HEADERS += MainWindow.h \
     ListWidget.h \
     Smtp.h \
     SendMail.h \
-    MessageBox.h
+    MessageBox.h \
+    MailDetails.h
