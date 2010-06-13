@@ -222,7 +222,7 @@ void MeetingActions::findHours () {
     liste.append(1);
     liste.append(2);
     liste.append(3);
-    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), 2, liste, available, extend);
+    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), cb_room->currentIndex(), liste, available, extend);
     if (qdt.time().hour() == 0) {
         QString text_result = "Aucune date ne correspond à votre recherche.";
         QMessageBox::information(this, "Résultat de la recherche", text_result);
@@ -231,8 +231,11 @@ void MeetingActions::findHours () {
         dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
     }
     else {
+        dt_begin->setDateTime(qdt);
+        dt_end->setDateTime(qdt);
+        dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
         QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
-        QMessageBox::information(this, "Résultat de la recherche", text_result);
+        QMessageBox::information(this, "Résultat de la recherche", text_result);        
     }
 }
 
@@ -241,6 +244,7 @@ void MeetingActions::findRoom () {
     //bool guest = qcb_guest->isChecked();
     //bool equipment = qcb_equipment->isChecked();
     int id_room = engine->findRoom(nb);
+    cb_room->setCurrentIndex(id_room);
     QString text_result = "La salle " + QString::number(id_room) + " est faite pour vous.";
     QMessageBox::information(this, "Résultat de la recherche", text_result);
 }
