@@ -350,14 +350,7 @@ void MeetingActions::makeAction(){
             state = "1";
         foreach (int user_id_to, list_users_id)
         {
-            if (user_id_to == id) {
-                QSqlQuery *req2 = new QSqlQuery();
-                req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '1')");
-                req2->bindValue(":meeting", req->value(0).toString());
-                req2->bindValue(":id", user_id_to);
-                req2->exec();
-            }
-            else {
+            if (user_id_to != id) {
                 QSqlQuery *req2 = new QSqlQuery();
                 req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, :state)");
                 req2->bindValue(":meeting", req->value(0).toString());
@@ -366,6 +359,17 @@ void MeetingActions::makeAction(){
                 req2->exec();
             }
         }
+        QSqlQuery *req2 = new QSqlQuery();
+        req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '1')");
+        req2->bindValue(":meeting", req->value(0).toString());
+        req2->bindValue(":id", id);
+        req2->exec();
+
+        req2->prepare(("INSERT INTO organizemeeting VALUES(:meeting, :user)"));
+        req2->bindValue(":meeting", req->value(0).toString());
+        req2->bindValue(":id", id);
+        req2->exec();
+
         emit notifyRefreshList();
     }
     else{
