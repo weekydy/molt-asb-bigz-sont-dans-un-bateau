@@ -298,6 +298,7 @@ void MeetingActions::makeAction(){
     if(le_label->text() == "") missingFields += "Libellé ; ";
     if(dt_begin->text() == "") missingFields += "Horaire début ; ";
     if(dt_end->text() == "") missingFields += "Horaire fin ; ";
+    if(cb_room->currentText() == "Automatique") missingFields += "Salles";
 
     QString periodicity = "0";
     if (qcb_recurring->currentText() == "Hebdomadaire")
@@ -366,125 +367,6 @@ void MeetingActions::makeAction(){
             }
         }
         emit notifyRefreshList();
-
-        accept();
-                // Si tout a été saisi
-        /*
-        QMap<QString, bool> map_list;
-        for(int i = 0; i < list->count(); ++i){
-            map_list[list->itemText(i)] = list->itemData(i).toBool();
-            qDebug() << list->itemData(i);
-        }
-
-
-        QSqlQuery *req = new QSqlQuery;
-
-
-
-
-        req->prepare("SELECT room_id, room_name FROM room WHERE room_name = :name");
-        req->bindValue(":name", le_room_name->text());
-        req->exec();
-
-        if(action == EDIT){
-            // si il n'y a pas d'entrée similaire, ou si on modifie notre propre occurence
-            if(!req->next() || req->value(0).toInt() == id){
-
-                req->prepare("UPDATE room SET room_name = :name, room_capacity = :capacity WHERE room_id = :id");
-                req->bindValue(":id", id);
-                req->bindValue(":name", le_room_name->text());
-                req->bindValue(":capacity", (int)le_room_capacity->value());
-
-                if(req->exec()){
-
-                    // on supprime tout les equipements
-                    req->prepare("DELETE FROM haveequipment WHERE room_id = :id_room");
-                    req->bindValue(":id_room", id);
-                    req->exec();
-
-                    // on parcours la liste, et on ajoute les equipements au fur et à mesure
-                    QMapIterator<QString, bool> it(map_list);
-                    while(it.hasNext()){
-                        it.next();
-                        if(it.value()){ // si l'équipement est coché
-                            // on recupere l'id de l'equipement
-                            req->prepare("SELECT equip_id FROM equipment WHERE equip_name = :name");
-                            req->bindValue(":name", it.key());
-                            req->exec();
-                            req->first();
-                            int id_equipment = req->value(0).toInt();
-
-                            // on ajoute l'equipement
-                            req->prepare("INSERT INTO haveequipment VALUES(:id_room, :id_equipment)");
-                            req->bindValue(":id_room", id);
-                            req->bindValue(":id_equipment", id_equipment);
-                            req->exec();
-                        }
-                    }
-
-                    emit notifyRefreshList();
-                    QMessageBox::information(this, "Requête exécutée avec succès !", "La salle a été modifié dans la base de données !");
-                    accept();
-
-                }
-                else{
-                    QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
-                }
-            }
-            else{
-                QMessageBox::warning(this, "Erreur !", "La salle existe déjà dans la base de données !");
-            }
-        }
-        else if(action == ADD){
-            // si il n'y a pas d'entrée similaire
-            if(!req->next()){
-                req->prepare("INSERT INTO room(room_name, room_capacity) VALUES (:name, :capacity)");
-                req->bindValue(":name", le_room_name->text());
-                req->bindValue(":capacity", le_room_capacity->value());
-
-                if(req->exec()){
-                    // on met à jour l'id
-                    id = req->lastInsertId().toInt();
-
-
-                    // on supprime tout les equipements
-                    req->prepare("DELETE FROM haveequipment WHERE room_id = :id_room");
-                    req->bindValue(":id_room", id);
-                    req->exec();
-
-                    // on parcours la liste, et on ajoute les equipements au fur et à mesure
-                    QMapIterator<QString, bool> it(map_list);
-                    while(it.hasNext()){
-                        it.next();
-                        if(it.value()){ // si l'équipement est coché
-                            // on recupere l'id de l'equipement
-                            req->prepare("SELECT equip_id FROM equipment WHERE equip_name = :name");
-                            req->bindValue(":name", it.key());
-                            req->exec();
-                            req->first();
-                            int id_equipment = req->value(0).toInt();
-
-                            // on ajoute l'equipement
-                            req->prepare("INSERT INTO haveequipment VALUES(:id_room, :id_equipment)");
-                            req->bindValue(":id_room", id);
-                            req->bindValue(":id_equipment", id_equipment);
-                            req->exec();
-                        }
-                    }
-
-
-                    emit notifyRefreshList();
-                    QMessageBox::information(this, "Requête exécutée avec succès !", "La salle a été ajouté dans la base de données !");
-                    accept();
-                }
-                else{
-                    QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
-                }
-            }
-            else{
-                QMessageBox::warning(this, "Erreur !", "La salle existe déjà dans la base de données !");
-            }
-        }*/
     }
     else{
         QMessageBox::warning(this, "Action Impossible", "Veuillez remplir les champs vides :\n"+missingFields);
