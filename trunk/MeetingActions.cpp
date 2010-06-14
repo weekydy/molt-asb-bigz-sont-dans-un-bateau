@@ -240,12 +240,35 @@ void MeetingActions::findHours () {
 }
 
 void MeetingActions::findRoom () {
-    int nb = 5;
-    //bool guest = qcb_guest->isChecked();
+    bool guest = qcb_guest->isChecked();
     //bool equipment = qcb_equipment->isChecked();
-    int id_room = engine->findRoom(nb);
+    QSqlQuery *req = new QSqlQuery();
+    QSet<int> list_users_id;
+    for(int i = 0; i < lw_targets->count(); i++)
+    {
+        if(lw_targets->item(i)->text().contains("[GRP] "))
+        {
+
+            int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
+            req->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
+            req->bindValue(":grp_id", grp_id);
+            req->exec();
+
+            while(req->next())
+            {
+                if(!list_users_id.contains(req->value(0).toInt()))
+                    list_users_id.insert(req->value(0).toInt());
+            }
+        }
+        else
+        {
+            if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
+                list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
+        }
+    }
+    int id_room = engine->findRoom(list_users_id.size(), guest);
     cb_room->setCurrentIndex(id_room);
-    QString text_result = "La salle " + QString::number(id_room) + " est faite pour vous.";
+    QString text_result = "La salle " + cb_room->currentText() + " est faite pour vous.";
     QMessageBox::information(this, "Résultat de la recherche", text_result);
 }
 

@@ -143,7 +143,7 @@ QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room
     return date;
 }
 
-int SolutionsEngine::findRoom(int nb_guest)
+int SolutionsEngine::findRoom(int nb_guest, bool guest)
 {
     std::ostringstream out;
     out << nb_guest;

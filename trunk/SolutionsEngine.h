@@ -12,7 +12,7 @@ public :
         ~SolutionsEngine();
 
         QDateTime findHours(QDateTime date, QTime duration, int id_room, QList<int> id_people, bool available, bool extend);
-        int findRoom(int id_people);
+        int findRoom(int id_people, bool guest);
 };
 
 #endif // SOLUTIONSENGINE_H
