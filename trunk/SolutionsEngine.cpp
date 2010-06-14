@@ -6,10 +6,9 @@ SolutionsEngine::SolutionsEngine() {}
 
 SolutionsEngine::~SolutionsEngine() {}
 
-QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room, QList<int> id_people, bool available, bool extend)
+QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room, QSet<int> id_people, bool available, bool extend)
 {
     int begin = -1;
-    qDebug() << duration;
     if (duration.hour() > 11)
     {
         date.setTime(QTime(0,0,0,0));
@@ -17,12 +16,15 @@ QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room
     }
     while(begin < 0 )
     {
+        std::ostringstream room;
+        room << id_room;
         //Requette retournant toutes les réunions à un jour donné
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("SELECT meeting_begin, meeting_end FROM meeting m WHERE m.room_id = 2 AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day");
+        req->prepare("SELECT meeting_begin, meeting_end FROM meeting m WHERE m.room_id = :id_room AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day");
         req->bindValue(":year", date.date().toString("yyyy"));
         req->bindValue(":month", date.date().toString("MM"));
         req->bindValue(":day", date.date().toString("dd"));
+        req->bindValue(":id_room", QString::fromStdString(room.str()));
         req->exec();
 
         QBitArray qba_room(48);
@@ -145,12 +147,15 @@ QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room
 
 int SolutionsEngine::findRoom(int nb_guest, bool guest)
 {
-    std::ostringstream out;
-    out << nb_guest;
-    //Requette retournant toutes les réunions à un jour donné
+    std::ostringstream nb;
+    if (guest)
+        nb << nb_guest;
+    else
+        nb << 0;
+    //Requette retournant toutes les salles triées par capacité, > à la demande.
     QSqlQuery *req = new QSqlQuery();
     req->prepare("SELECT * FROM room r WHERE r.room_capacity >= :nb ORDER BY r.room_capacity");
-    req->bindValue(":nb", QString::fromStdString(out.str()));
+    req->bindValue(":nb", QString::fromStdString(nb.str()));
     req->exec();
 
     req->first();
