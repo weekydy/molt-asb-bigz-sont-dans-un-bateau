@@ -218,11 +218,31 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 void MeetingActions::findHours () {
     bool available = qcb_available->isChecked();
     bool extend = qcb_extend->isChecked();
-    QList<int> liste;
-    liste.append(1);
-    liste.append(2);
-    liste.append(3);
-    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), cb_room->currentIndex(), liste, available, extend);
+    QSqlQuery *req = new QSqlQuery();
+    QSet<int> list_users_id;
+    for(int i = 0; i < lw_targets->count(); i++)
+    {
+        if(lw_targets->item(i)->text().contains("[GRP] "))
+        {
+
+            int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
+            req->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
+            req->bindValue(":grp_id", grp_id);
+            req->exec();
+
+            while(req->next())
+            {
+                if(!list_users_id.contains(req->value(0).toInt()))
+                    list_users_id.insert(req->value(0).toInt());
+            }
+        }
+        else
+        {
+            if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
+                list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
+        }
+    }
+    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), cb_room->currentIndex(), list_users_id, available, extend);
     if (qdt.time().hour() == 0) {
         QString text_result = "Aucune date ne correspond à votre recherche.";
         QMessageBox::information(this, "Résultat de la recherche", text_result);
@@ -279,26 +299,72 @@ void MeetingActions::makeAction(){
     if(dt_begin->text() == "") missingFields += "Horaire début ; ";
     if(dt_end->text() == "") missingFields += "Horaire fin ; ";
 
+    QString periodicity = "0";
+    if (qcb_recurring->currentText() == "Hebdomadaire")
+        periodicity = "1";
+    else if (qcb_recurring->currentText() == "Mensuel")
+        periodicity = "2";
+
     if (missingFields == ""){
         //Requette retournant toutes les réunions à un jour donné
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, '0')");
+        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, :periodicity)");
         req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":label", le_label->text());
         req->bindValue(":room", cb_room->currentIndex());
+        req->bindValue(":periodicity", periodicity);
         req->exec();
 
         req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");
         req->exec();
         req->first();
 
-        QSqlQuery *req2 = new QSqlQuery();
-        req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '0')");
-        req2->bindValue(":meeting", req->value(0).toString());
-        req2->bindValue(":id", id);
-        req2->exec();
+        QSqlQuery *req1 = new QSqlQuery();
+        QSet<int> list_users_id;
+        for(int i = 0; i < lw_targets->count(); i++)
+        {
+            if(lw_targets->item(i)->text().contains("[GRP] "))
+            {
 
+                int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
+                req1->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
+                req1->bindValue(":grp_id", grp_id);
+                req1->exec();
+
+                while(req->next())
+                {
+                    if(!list_users_id.contains(req1->value(0).toInt()))
+                        list_users_id.insert(req1->value(0).toInt());
+                }
+            }
+            else
+            {
+                if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
+                    list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
+            }
+        }
+        QString state = "0";
+        if (qcb_compulsory->isChecked())
+            state = "1";
+        foreach (int user_id_to, list_users_id)
+        {
+            if (user_id_to == id) {
+                QSqlQuery *req2 = new QSqlQuery();
+                req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '1')");
+                req2->bindValue(":meeting", req->value(0).toString());
+                req2->bindValue(":id", user_id_to);
+                req2->exec();
+            }
+            else {
+                QSqlQuery *req2 = new QSqlQuery();
+                req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, :state)");
+                req2->bindValue(":meeting", req->value(0).toString());
+                req2->bindValue(":id", user_id_to);
+                req2->bindValue(":state", state);
+                req2->exec();
+            }
+        }
         emit notifyRefreshList();
 
         accept();

@@ -118,7 +118,7 @@ void TabItemNews::refreshListEvent(){
     int i=0, j;
     QSqlQuery *req = new QSqlQuery();
     QSqlRecord rec;
-    req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON hm.user_id = hm.user_id INNER JOIN user u ON u.user_id = m.user_id WHERE hm.user_id = :user_id AND hm.hm_state = :state ORDER BY meeting_begin DESC");
+    req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON hm.user_id = hm.user_id INNER JOIN user u ON u.user_id = hm.user_id WHERE hm.user_id = :user_id AND hm.hm_state = :state ORDER BY meeting_begin DESC");
     req->bindValue(":user_id", user_id);
     req->bindValue(":state", MAY_ATTEND);
     req->exec();
