@@ -52,6 +52,9 @@ private slots:
     void deleteItem_out();
     void displayMail_in();
     void displayMail_out();
+
+signals:
+    void notifyRefreshList();
 };
 
 #endif // TABITEMROOM_H

@@ -118,9 +118,9 @@ void TabItemNews::refreshListEvent(){
     int i=0, j;
     QSqlQuery *req = new QSqlQuery();
     QSqlRecord rec;
-    req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON hm.user_id = hm.user_id INNER JOIN user u ON u.user_id = hm.user_id WHERE hm.user_id = :user_id AND hm.hm_state = :state ORDER BY meeting_begin DESC");
+    req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON hm.meeting_id = m.meeting_id INNER JOIN user u ON u.user_id = hm.user_id WHERE hm.user_id = :user_id AND hm.hm_state = :state ORDER BY meeting_begin DESC");
     req->bindValue(":user_id", user_id);
-    req->bindValue(":state", MAY_ATTEND);
+    req->bindValue(":state", 0);
     req->exec();
     rec = req->record();
 
@@ -185,12 +185,38 @@ void TabItemNews::refreshListEvent(){
         lb_message_event->setText("Vous avez des notifications à traiter.");
 }
 
-void TabItemNews::acceptMeeting(int id_meeting){
-
+void TabItemNews::acceptMeeting(int meeting_id){
+    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de vouloir assister à cette réunion ?", QMessageBox::Yes | QMessageBox::No);
+    if(rep == QMessageBox::Yes){
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("UPDATE havemeeting SET hm_state = :state WHERE user_id = :user_id AND meeting_id = :meeting_id");
+        req->bindValue(":state", 1);
+        req->bindValue(":user_id", user_id);
+        req->bindValue(":meeting_id", meeting_id);
+        if(req->exec())
+        {
+            refreshListEvent();
+            emit notifyRefreshList();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "La réunion a été ajouté dans votre planning.");
+        }
+    }
 }
 
-void TabItemNews::declineMeeting(int id_meeting){
-
+void TabItemNews::declineMeeting(int meeting_id){
+    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de ne pas assister à cette réunion ?", QMessageBox::Yes | QMessageBox::No);
+    if(rep == QMessageBox::Yes){
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("UPDATE havemeeting SET hm_state = :state WHERE user_id = :user_id AND meeting_id = :meeting_id");
+        req->bindValue(":state", -1);
+        req->bindValue(":user_id", user_id);
+        req->bindValue(":meeting_id", meeting_id);
+        if(req->exec())
+        {
+            refreshListEvent();
+            emit notifyRefreshList();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "Vous ne participerai pas à cette réunion.");
+        }
+    }
 }
 
 void TabItemNews::refreshListMail(){

@@ -128,11 +128,12 @@ void TabItemPlanning::refreshList(){
 
         QSqlQuery *req = new QSqlQuery();
         QSqlRecord rec;
-        req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
+        req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE hm.hm_state = :state AND u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
         req->bindValue(":user_id", user_id);
         req->bindValue(":year", date_y_m_d.at(0));
         req->bindValue(":month", date_y_m_d.at(1));
         req->bindValue(":day", date_y_m_d.at(2));
+        req->bindValue(":state", 1);
         req->exec();
         rec = req->record();
 
@@ -193,11 +194,12 @@ void TabItemPlanning::refreshList(){
 
             QSqlQuery *req = new QSqlQuery();
             QSqlRecord rec;
-            req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
+            req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE hm.hm_state = :state AND u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
             req->bindValue(":user_id", user_id);
             req->bindValue(":year", date_y_m_d.at(0));
             req->bindValue(":month", date_y_m_d.at(1));
             req->bindValue(":day", date_y_m_d.at(2));
+            req->bindValue(":state", 1);
             req->exec();
             rec = req->record();
 
@@ -272,11 +274,12 @@ void TabItemPlanning::refreshList(){
 
             QSqlQuery *req = new QSqlQuery();
             QSqlRecord rec;
-            req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
+            req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE hm.hm_state = :state AND u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
             req->bindValue(":user_id", user_id);
             req->bindValue(":year", date_y_m_d.at(0));
             req->bindValue(":month", date_y_m_d.at(1));
             req->bindValue(":day", date_y_m_d.at(2));
+            req->bindValue(":state", 1);
             req->exec();
             rec = req->record();
 
@@ -309,7 +312,7 @@ void TabItemPlanning::displayInfo(){
     QModelIndex index = view->selectionModel()->currentIndex();
     if(index.isValid()){
         Meeting m = model->item(index.row(), index.column())->data().value<Meeting>();
-        MeetingDetails *meeting_details = new MeetingDetails(m.id());
+        MeetingDetails *meeting_details = new MeetingDetails(user_id, m.id());
         connect(meeting_details, SIGNAL(notifyRefreshList()), this, SLOT(refreshList()));
         meeting_details->exec();
     }
