@@ -8,5 +8,8 @@
         <file alias="group_not.png">img/goup_not.png</file>
         <file alias="person.png">img/person.png</file>
         <file alias="person_not.png">img/person_not.png</file>
+        <file alias="attend.png">img/attend.png</file>
+        <file alias="may_attend.png">img/may_attend.png</file>
+        <file alias="not_attend.png">img/not_attend.png</file>
     </qresource>
 </RCC>

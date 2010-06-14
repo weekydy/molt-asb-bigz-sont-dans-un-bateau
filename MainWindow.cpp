@@ -81,9 +81,14 @@ void MainWindow::createWidgets(){
         QTabWidget *tabWidget = new QTabWidget(this);
         tabWidget->setMovable(true);
 
-        tabWidget->addTab(new TabItemNews(user_id), "Mes notifications");
-        tabWidget->addTab(new TabItemPlanning(user_id), "Mon planning");
+        TabItemNews *tabItemNews = new TabItemNews(user_id);
+        TabItemPlanning *tabItemPlanning = new TabItemPlanning(user_id);
+
+        tabWidget->addTab(tabItemNews, "Mes notifications");
+        tabWidget->addTab(tabItemPlanning, "Mon planning");
         tabWidget->addTab(new TabItemProfile(user_id), "Mon profil");
+
+        connect(tabItemNews, SIGNAL(notifyRefreshList()), tabItemPlanning, SLOT(refreshList()));
 
         if(access == ONLINE_USER){
             myStatusBar->showMessage("Connecté");

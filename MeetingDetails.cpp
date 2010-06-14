@@ -1,14 +1,15 @@
 #include "MeetingDetails.h"
 
-MeetingDetails::MeetingDetails(int _id, QWidget *parent) : QDialog(parent)
+MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) : QDialog(parent)
 {
-    id = _id;
+    user_id = _user_id;
+    meeting_id = _meeting_id;
 
     setWindowTitle("Détails de la réunion");
 
     QSqlQuery *req = new QSqlQuery();
     req->prepare("SELECT * FROM meeting m WHERE m.meeting_id = :meeting_id");
-    req->bindValue(":meeting_id", id);
+    req->bindValue(":meeting_id", meeting_id);
     req->exec();
     QSqlRecord rec = req->record();
     req->next();
@@ -19,17 +20,30 @@ MeetingDetails::MeetingDetails(int _id, QWidget *parent) : QDialog(parent)
 
     cb_users = new QComboBox();
 
-    req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON m.meeting_id = hm.meeting_id INNER JOIN user u ON u.user_id = hm.user_id WHERE m.meeting_id = :meeting_id ORDER BY user_surname, user_name");
-    req->bindValue(":meeting_id", id);
+    req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON m.meeting_id = hm.meeting_id INNER JOIN user u ON u.user_id = hm.user_id WHERE m.meeting_id = :meeting_id ORDER BY hm.hm_state DESC, user_surname, user_name");
+    req->bindValue(":meeting_id", meeting_id);
     req->exec();
     rec = req->record();
     while(req->next()){
-        cb_users->addItem(req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+        qDebug() << req->value(rec.indexOf("hm_state")).toInt();
+        QIcon icon;
+        if(req->value(rec.indexOf("hm_state")).toInt() == -1)
+        {
+            cb_users->addItem(QIcon(":not_attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+        }
+        else if(req->value(rec.indexOf("hm_state")).toInt() == 1)
+        {
+            cb_users->addItem(QIcon(":attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+        }
+        else
+        {
+            cb_users->addItem(QIcon(":may_attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+        }
     }
 
     cb_equipments = new QComboBox();
     req->prepare("SELECT * FROM meeting m INNER JOIN room r ON r.room_id = m.room_id INNER JOIN haveequipment he ON he.room_id = r.room_id INNER JOIN equipment e ON he.equip_id = e.equip_id WHERE m.meeting_id = :meeting_id ORDER BY equip_name");
-    req->bindValue(":meeting_id", id);
+    req->bindValue(":meeting_id", meeting_id);
     req->exec();
     rec = req->record();
     while(req->next()){
@@ -72,5 +86,18 @@ MeetingDetails::MeetingDetails(int _id, QWidget *parent) : QDialog(parent)
 }
 
 void MeetingDetails::canceledMeeting(){
-    emit notifyRefreshList();
+    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de ne pas assister à cette réunion ?", QMessageBox::Yes | QMessageBox::No);
+    if(rep == QMessageBox::Yes){
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("UPDATE havemeeting SET hm_state = :state WHERE user_id = :user_id AND meeting_id = :meeting_id");
+        req->bindValue(":state", -1);
+        req->bindValue(":user_id", user_id);
+        req->bindValue(":meeting_id", meeting_id);
+        if(req->exec())
+        {
+            emit notifyRefreshList();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "Vous ne serez pas à la réunion.");
+            accept();
+        }
+    }
 }

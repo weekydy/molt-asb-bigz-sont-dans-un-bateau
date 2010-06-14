@@ -12,10 +12,11 @@ class MeetingDetails : public QDialog
 {
 Q_OBJECT
 public:
-    MeetingDetails(int id, QWidget *parent = 0);
+    MeetingDetails(int _user_id, int _meeting_id, QWidget *parent = 0);
 
 private:
-    int id;
+    int user_id;
+    int meeting_id;
     
     QLabel *lb_label;
     QLabel *lb_begin;

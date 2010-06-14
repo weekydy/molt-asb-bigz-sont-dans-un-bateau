@@ -358,6 +358,7 @@ void MeetingActions::makeAction(){
                 req2->exec();
             }
         }
+
         QSqlQuery *req2 = new QSqlQuery();
         req2->prepare("INSERT INTO havemeeting VALUES (:meeting, :id, '1')");
         req2->bindValue(":meeting", req->value(0).toString());

@@ -21,7 +21,6 @@ MailDetails::MailDetails(int user_id_from, int user_id_to, QString date, QWidget
     te_text->setEnabled(false);
 
 
-
     QFormLayout *fl_data = new QFormLayout;
     fl_data->addRow("De:", lb_from);
     fl_data->addRow("A:", lb_to);
