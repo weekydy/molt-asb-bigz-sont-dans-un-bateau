@@ -54,10 +54,10 @@ QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room
         if (available)
         {
             //Recherche des disponibilités des invités
-            for (int i = 0; i < id_people.size(); ++i)
+           foreach (int user_id, id_people)
             {
                 req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id WHERE u.user_id = :id_people  AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day");
-                req->bindValue(":id_peolple", QString::number(i));
+                req->bindValue(":id_peolple", QString::number(user_id));
                 req->bindValue(":year", date.date().toString("yyyy"));
                 req->bindValue(":month", date.date().toString("MM"));
                 req->bindValue(":day", date.date().toString("dd"));

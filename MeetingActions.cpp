@@ -327,13 +327,12 @@ void MeetingActions::makeAction(){
         {
             if(lw_targets->item(i)->text().contains("[GRP] "))
             {
-
                 int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
                 req1->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
                 req1->bindValue(":grp_id", grp_id);
                 req1->exec();
 
-                while(req->next())
+                while(req1->next())
                 {
                     if(!list_users_id.contains(req1->value(0).toInt()))
                         list_users_id.insert(req1->value(0).toInt());
@@ -371,12 +370,11 @@ void MeetingActions::makeAction(){
         req2->exec();
 
         emit notifyRefreshList();
+        accept();
     }
     else{
         QMessageBox::warning(this, "Action Impossible", "Veuillez remplir les champs vides :\n"+missingFields);
     }
-    accept();
-
 }
 
 void MeetingActions::changeComboBoxEquipment(int index){
