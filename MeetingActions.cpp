@@ -250,9 +250,6 @@ void MeetingActions::findHours () {
                 if (qdt.time().hour() == 0) {
                     QString text_result = "Aucune date ne correspond à votre recherche.";
                     QMessageBox::information(this, "Résultat de la recherche", text_result);
-                    dt_begin->setDateTime(qdt);
-                    dt_end->setDateTime(qdt);
-                    dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
                 }
                 else {
                     dt_begin->setDateTime(qdt);
@@ -310,6 +307,8 @@ void MeetingActions::findRoom () {
 }
 
 void MeetingActions::makeAction(){
+     bool available = qcb_available->isChecked();
+     bool guest = qcb_guest->isChecked();
 
     QString missingFields("");
     if(le_label->text() == "") missingFields += "Libellé ; ";
@@ -323,7 +322,31 @@ void MeetingActions::makeAction(){
     else if (qcb_recurring->currentText() == "Mensuel")
         periodicity = "2";
 
-    if (missingFields == ""){
+    QSqlQuery *req1 = new QSqlQuery();
+    QSet<int> list_users_id;
+    for(int i = 0; i < lw_targets->count(); i++)
+    {
+        if(lw_targets->item(i)->text().contains("[GRP] "))
+        {
+            int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
+            req1->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
+            req1->bindValue(":grp_id", grp_id);
+            req1->exec();
+
+            while(req1->next())
+            {
+                if(!list_users_id.contains(req1->value(0).toInt()))
+                    list_users_id.insert(req1->value(0).toInt());
+            }
+        }
+        else
+        {
+            if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
+                list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
+        }
+    }
+
+    if (missingFields == "" && engine->verif(dt_begin->dateTime(), dt_end->dateTime(), cb_room->currentIndex(), list_users_id, available, guest) == 1){
 
         QString state = "0";
         if (qcb_compulsory->isChecked())
@@ -343,29 +366,6 @@ void MeetingActions::makeAction(){
         req->exec();
         req->first();
 
-        QSqlQuery *req1 = new QSqlQuery();
-        QSet<int> list_users_id;
-        for(int i = 0; i < lw_targets->count(); i++)
-        {
-            if(lw_targets->item(i)->text().contains("[GRP] "))
-            {
-                int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
-                req1->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
-                req1->bindValue(":grp_id", grp_id);
-                req1->exec();
-
-                while(req1->next())
-                {
-                    if(!list_users_id.contains(req1->value(0).toInt()))
-                        list_users_id.insert(req1->value(0).toInt());
-                }
-            }
-            else
-            {
-                if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
-                    list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
-            }
-        }
         foreach (int user_id_to, list_users_id)
         {
             if (user_id_to != id) {
