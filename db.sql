@@ -18,7 +18,7 @@ CREATE TABLE room(
 );
 
 INSERT INTO room VALUES(null, 'A200', '10');
-INSERT INTO room VALUES(null, 'A312', '6');
+INSERT INTO room VALUES(null, 'A312', '10');
 INSERT INTO room VALUES(null, 'B402', '5');
 INSERT INTO room VALUES(null, 'I102', '30');
 
@@ -49,7 +49,13 @@ CREATE TABLE meeting(
 	FOREIGN KEY('room_id') REFERENCES 'room' ('room_id')
 );
 
-INSERT INTO meeting VALUES(null, '2', '2010-05-20 08:45', '2010-05-20 11:30', 'Retraite de Jean-Paul', '0');
+INSERT INTO meeting VALUES(null, '4', '2010-06-21 08:00', '2010-06-21 11:00', 'Retraite de Jean-Paul', '0');
+INSERT INTO meeting VALUES(null, '4', '2010-06-21 13:00', '2010-06-21 14:30', 'Anniversaire de George', '0');
+INSERT INTO meeting VALUES(null, '2', '2010-06-22 09:00', '2010-06-22 11:30', 'Réunion hebdomadaire LO45', '1');
+INSERT INTO meeting VALUES(null, '2', '2010-06-22 15:30', '2010-06-22 17:30', 'Bambo Clash hebdomadaire', '1');
+INSERT INTO meeting VALUES(null, '2', '2010-06-23 08:00', '2010-06-23 10:30', 'Réunion mensuelle finance', '2');
+INSERT INTO meeting VALUES(null, '2', '2010-06-23 13:00', '2010-06-23 15:00', 'Lancement nouveau projet R&D', '0');
+INSERT INTO meeting VALUES(null, '4', '2010-06-24 13:00', '2010-06-23 15:00', 'Réunion mensuelle GI02', '2');
 
 CREATE TABLE grp(
 	grp_id integer PRIMARY KEY AUTOINCREMENT,
@@ -58,6 +64,9 @@ CREATE TABLE grp(
 
 INSERT INTO grp VALUES(null, 'R&D');
 INSERT INTO grp VALUES(null, 'Marketing');
+INSERT INTO grp VALUES(null, 'GI02');
+INSERT INTO grp VALUES(null, 'LO45');
+INSERT INTO grp VALUES(null, 'Bambo Clash');
 
 
 CREATE TABLE user(
@@ -69,9 +78,13 @@ CREATE TABLE user(
 	user_access integer NOT NULL DEFAULT 1
 );
 
-INSERT INTO user VALUES(null, 'Bastien', 'CRAMILLET', 'bcramill', 'bigz', '1');
+INSERT INTO user VALUES(null, 'Bastien', 'CRAMILLET', 'bcramill', 'bigz', '2');
 INSERT INTO user VALUES(null, 'Adrien', 'GAVIGNET', 'agavigne', 'asb', '2');
 INSERT INTO user VALUES(null, 'Jérémy', 'MALTIS', 'jmaltis', 'moltes', '1');
+INSERT INTO user VALUES(null, 'Xavier', 'MICHEL', 'xmichel', 'saffir', '1');
+INSERT INTO user VALUES(null, 'Alexandre', 'OULD-HAMOUDA', 'aould', 'tetex', '1');
+INSERT INTO user VALUES(null, 'Kévin', 'LAURENT', 'klaurent', 'khand', '1');
+INSERT INTO user VALUES(null, 'Claude', 'RENAUD', 'crenaud', 'cloclo', '2');
 
 CREATE TABLE belongtogroup(
 	grp_id integer,
@@ -83,7 +96,26 @@ CREATE TABLE belongtogroup(
 
 INSERT INTO belongtogroup VALUES('1', '1');
 INSERT INTO belongtogroup VALUES('1', '2');
+INSERT INTO belongtogroup VALUES('1', '7');
 INSERT INTO belongtogroup VALUES('2', '3');
+INSERT INTO belongtogroup VALUES('2', '6');
+INSERT INTO belongtogroup VALUES('3', '1');
+INSERT INTO belongtogroup VALUES('3', '2');
+INSERT INTO belongtogroup VALUES('3', '3');
+INSERT INTO belongtogroup VALUES('3', '4');
+INSERT INTO belongtogroup VALUES('3', '5');
+INSERT INTO belongtogroup VALUES('3', '6');
+INSERT INTO belongtogroup VALUES('3', '7');
+INSERT INTO belongtogroup VALUES('4', '1');
+INSERT INTO belongtogroup VALUES('4', '2');
+INSERT INTO belongtogroup VALUES('4', '3');
+INSERT INTO belongtogroup VALUES('4', '4');
+INSERT INTO belongtogroup VALUES('4', '5');
+INSERT INTO belongtogroup VALUES('4', '7');
+INSERT INTO belongtogroup VALUES('5', '1');
+INSERT INTO belongtogroup VALUES('5', '2');
+INSERT INTO belongtogroup VALUES('5', '4');
+INSERT INTO belongtogroup VALUES('5', '5');
 
 CREATE TABLE message(
 	user_id_from integer,
@@ -97,10 +129,10 @@ CREATE TABLE message(
 	FOREIGN KEY ('user_id_to') REFERENCES 'user' ('user_id')
 );
 
-INSERT INTO message VALUES('1', '2', '2010-06-03 20:34', '0', 'Hello', 'Bonjour, je voulais savoir si je pouvais dormir chez vous ce soir ?');
-INSERT INTO message VALUES('1', '2', '2010-06-03 20:34', '1', 'Hello', 'Bonjour, je voulais savoir si je pouvais dormir chez vous ce soir ?');
-INSERT INTO message VALUES('2', '3', '2010-06-03 18:43', '0', 'Test', 'Bonjour, êtes-vous dispo ce weekend pour bosser AG41 ?');
-INSERT INTO message VALUES('2', '3', '2010-06-03 18:43', '1', 'Test', 'Bonjour, êtes-vous dispo ce weekend pour bosser AG41 ?');
+INSERT INTO message VALUES('1', '2', '2010-06-03 20:34', '0', 'Demande de logement', 'Bonjour, je voulais savoir si je pouvais dormir chez vous ce soir ?');
+INSERT INTO message VALUES('1', '2', '2010-06-03 20:34', '1', 'Demande de logement', 'Bonjour, je voulais savoir si je pouvais dormir chez vous ce soir ?');
+INSERT INTO message VALUES('2', '3', '2010-06-03 18:43', '0', 'Projet AG41', 'Bonjour, êtes-vous dispo ce weekend pour bosser AG41 ?');
+INSERT INTO message VALUES('2', '3', '2010-06-03 18:43', '1', 'Projet AG41', 'Bonjour, êtes-vous dispo ce weekend pour bosser AG41 ?');
 
 CREATE TABLE haveequipment(
 	room_id integer,
@@ -131,7 +163,13 @@ CREATE TABLE organizemeeting(
 	FOREIGN KEY ('user_id') REFERENCES 'user' ('user_id')
 );
 
-INSERT INTO organizemeeting VALUES('1', '1');
+INSERT INTO organizemeeting VALUES('1', '7');
+INSERT INTO organizemeeting VALUES('2', '7');
+INSERT INTO organizemeeting VALUES('3', '7');
+INSERT INTO organizemeeting VALUES('4', '1');
+INSERT INTO organizemeeting VALUES('5', '3');
+INSERT INTO organizemeeting VALUES('6', '2');
+INSERT INTO organizemeeting VALUES('7', '3');
 
 CREATE TABLE havemeeting(
 	meeting_id integer,
@@ -142,6 +180,45 @@ CREATE TABLE havemeeting(
 	FOREIGN KEY('user_id') REFERENCES 'user' ('user_id')
 );
 
+
 INSERT INTO havemeeting VALUES('1', '1', '1');
 INSERT INTO havemeeting VALUES('1', '2', '1');
 INSERT INTO havemeeting VALUES('1', '3', '0');
+INSERT INTO havemeeting VALUES('1', '4', '0');
+INSERT INTO havemeeting VALUES('1', '5', '1');
+INSERT INTO havemeeting VALUES('1', '6', '1');
+INSERT INTO havemeeting VALUES('1', '7', '1');
+
+INSERT INTO havemeeting VALUES('2', '1', '0');
+INSERT INTO havemeeting VALUES('2', '2', '0');
+INSERT INTO havemeeting VALUES('2', '3', '1');
+INSERT INTO havemeeting VALUES('2', '4', '1');
+INSERT INTO havemeeting VALUES('2', '5', '1');
+INSERT INTO havemeeting VALUES('2', '6', '0');
+INSERT INTO havemeeting VALUES('2', '7', '1');
+
+INSERT INTO havemeeting VALUES('3', '1', '0');
+INSERT INTO havemeeting VALUES('3', '2', '1');
+INSERT INTO havemeeting VALUES('3', '3', '0');
+INSERT INTO havemeeting VALUES('3', '4', '1');
+INSERT INTO havemeeting VALUES('3', '5', '1');
+INSERT INTO havemeeting VALUES('3', '7', '1');
+
+INSERT INTO havemeeting VALUES('4', '1', '1');
+INSERT INTO havemeeting VALUES('4', '2', '0');
+INSERT INTO havemeeting VALUES('4', '4', '1');
+INSERT INTO havemeeting VALUES('4', '5', '0');
+
+INSERT INTO havemeeting VALUES('5', '3', '1');
+INSERT INTO havemeeting VALUES('5', '6', '1');
+
+INSERT INTO havemeeting VALUES('6', '1', '0');
+INSERT INTO havemeeting VALUES('6', '2', '1');
+INSERT INTO havemeeting VALUES('6', '7', '1');
+
+INSERT INTO havemeeting VALUES('7', '1', '1');
+INSERT INTO havemeeting VALUES('7', '2', '1');
+INSERT INTO havemeeting VALUES('7', '3', '1');
+INSERT INTO havemeeting VALUES('7', '4', '1');
+INSERT INTO havemeeting VALUES('7', '5', '1');
+INSERT INTO havemeeting VALUES('7', '7', '1');

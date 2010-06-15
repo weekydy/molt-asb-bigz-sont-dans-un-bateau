@@ -41,6 +41,16 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
         }
     }
 
+    cb_organizer = new QComboBox();
+    req->prepare("SELECT * FROM organizemeeting om INNER JOIN user u ON om.user_id = u.user_id WHERE om.meeting_id = :meeting_id ORDER BY user_surname, user_name");
+    req->bindValue(":meeting_id", meeting_id);
+    req->exec();
+    rec = req->record();
+    while(req->next())
+    {
+        cb_organizer->addItem(req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString());
+    }
+
     cb_equipments = new QComboBox();
     req->prepare("SELECT * FROM meeting m INNER JOIN room r ON r.room_id = m.room_id INNER JOIN haveequipment he ON he.room_id = r.room_id INNER JOIN equipment e ON he.equip_id = e.equip_id WHERE m.meeting_id = :meeting_id ORDER BY equip_name");
     req->bindValue(":meeting_id", meeting_id);
@@ -58,6 +68,7 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     fl_data->addRow("Libellé:", lb_label);
     fl_data->addRow("Début:", lb_begin);
     fl_data->addRow("Fin:", lb_end);
+    fl_data->addRow("Organisateur(s):", cb_organizer);
     fl_data->addRow("Invité(s):", cb_users);
     fl_data->addRow("Salle:", lb_room);
     fl_data->addRow("Equipement(s):", cb_equipments);
@@ -65,6 +76,18 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     btn_unavailable = new QPushButton("Ne sera pas présent");
     btn_action = new QPushButton("Ok");
     btn_cancel = new QPushButton("&Annuler");
+
+
+
+    req->prepare("SELECT * FROM organizemeeting WHERE user_id = :user_id AND meeting_id = :meeting_id");
+    req->bindValue(":user_id", user_id);
+    req->bindValue(":meeting_id", meeting_id);
+    req->exec();
+    if(req->first())
+    {
+        btn_unavailable->setDisabled(true);
+        btn_unavailable->setToolTip("En tant qu'organisateur, vous êtes contraint d'assister à cette réunion.");
+    }
 
 
     QHBoxLayout *layout_buttons = new QHBoxLayout;
