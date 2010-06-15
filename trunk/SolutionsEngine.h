@@ -12,7 +12,8 @@ public :
         ~SolutionsEngine();
 
         QDateTime findHours(QDateTime date, QTime duration, int id_room, QSet<int> id_people, bool available, bool extend);
-        int findRoom(int id_people, bool guest);
+        int findRoom(int nb_people, bool guest);
+        int verif(QDateTime begin, QDateTime end, int room, QSet<int> people, bool available, bool guest);
 };
 
 #endif // SOLUTIONSENGINE_H
