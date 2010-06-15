@@ -216,48 +216,65 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 }
 
 void MeetingActions::findHours () {
-    bool available = qcb_available->isChecked();
-    bool extend = qcb_extend->isChecked();
-    QSqlQuery *req = new QSqlQuery();
-    QSet<int> list_users_id;
-    for(int i = 0; i < lw_targets->count(); i++)
-    {
-        if(lw_targets->item(i)->text().contains("[GRP] "))
-        {
+    QString missingFields("");
+    if (cb_room->currentText() != "Automatique") {
+        if (dt_begin2->date() >= QDate::currentDate()) {
+            if (qte_duration->time().hour() != 0 && qte_duration->time().hour() < 12) {
+                bool available = qcb_available->isChecked();
+                bool extend = qcb_extend->isChecked();
+                QSqlQuery *req = new QSqlQuery();
+                QSet<int> list_users_id;
+                for(int i = 0; i < lw_targets->count(); i++)
+                {
+                    if(lw_targets->item(i)->text().contains("[GRP] "))
+                    {
 
-            int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
-            req->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
-            req->bindValue(":grp_id", grp_id);
-            req->exec();
+                        int grp_id = lw_targets->item(i)->data(Qt::UserRole).toInt();
+                        req->prepare("SELECT user_id FROM belongtogroup WHERE grp_id = :grp_ip");
+                        req->bindValue(":grp_id", grp_id);
+                        req->exec();
 
-            while(req->next())
-            {
-                if(!list_users_id.contains(req->value(0).toInt()))
-                    list_users_id.insert(req->value(0).toInt());
+                        while(req->next())
+                        {
+                            if(!list_users_id.contains(req->value(0).toInt()))
+                                list_users_id.insert(req->value(0).toInt());
+                        }
+                    }
+                    else
+                    {
+                        if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
+                            list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
+                    }
+                }
+                QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), cb_room->currentIndex(), list_users_id, available, extend);
+                if (qdt.time().hour() == 0) {
+                    QString text_result = "Aucune date ne correspond à votre recherche.";
+                    QMessageBox::information(this, "Résultat de la recherche", text_result);
+                    dt_begin->setDateTime(qdt);
+                    dt_end->setDateTime(qdt);
+                    dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
+                }
+                else {
+                    dt_begin->setDateTime(qdt);
+                    dt_end->setDateTime(qdt);
+                    dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
+                    QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
+                    QMessageBox::information(this, "Résultat de la recherche", text_result);
+                }
+            }
+            else {
+                QMessageBox::warning(this, "Action Impossible", "Attention, une réunion doit durer entre 15 minutes et 12h");
             }
         }
-        else
-        {
-            if(!list_users_id.contains(lw_targets->item(i)->data(Qt::UserRole).toInt()))
-                list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
+        else {
+            QMessageBox::warning(this, "Action Impossible", "Attention, vous ne pouvez choisir une date antérieure à la date courrante.");
         }
     }
-    QDateTime qdt = engine->findHours(dt_begin2->dateTime(), qte_duration->time(), cb_room->currentIndex(), list_users_id, available, extend);
-    if (qdt.time().hour() == 0) {
-        QString text_result = "Aucune date ne correspond à votre recherche.";
-        QMessageBox::information(this, "Résultat de la recherche", text_result);
-        dt_begin->setDateTime(qdt);
-        dt_end->setDateTime(qdt);
-        dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
-    }
     else {
-        dt_begin->setDateTime(qdt);
-        dt_end->setDateTime(qdt);
-        dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
-        QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
-        QMessageBox::information(this, "Résultat de la recherche", text_result);        
+        QMessageBox::warning(this, "Action Impossible", "Veuillez choisir une salle ou en chercher une depuis le module de recherche.");
     }
 }
+
 
 void MeetingActions::findRoom () {
     bool guest = qcb_guest->isChecked();
