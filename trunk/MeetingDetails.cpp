@@ -22,6 +22,9 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     btn_unavailable = new QPushButton("Ne sera pas présent");
     btn_action = new QPushButton("Ok");
     btn_cancel = new QPushButton("&Annuler");
+    btn_del = new QPushButton("Supprimer cette réunion");
+    btn_del->setDisabled(true);
+    btn_del->setToolTip("Seul les organisteurs peuvent supprimer la réunion.");
 
     if(req->value(rec.indexOf("meeting_compulsary")).toInt() == 1)
     {
@@ -95,12 +98,18 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     {
         btn_unavailable->setDisabled(true);
         btn_unavailable->setToolTip("En tant qu'organisateur, vous êtes contraint d'assister à cette réunion.");
+
+        btn_del->setDisabled(false);
+        btn_del->setToolTip("Ceci est une action irréversible.");
+
+        connect(btn_del, SIGNAL(clicked()), this, SLOT(deleteMeeting()));
     }
 
 
     QHBoxLayout *layout_buttons = new QHBoxLayout;
     layout_buttons->setAlignment(Qt::AlignRight);
     layout_buttons->addWidget(btn_unavailable);
+    layout_buttons->addWidget(btn_del);
     layout_buttons->addWidget(btn_action);
     layout_buttons->addWidget(btn_cancel);
 
@@ -129,6 +138,35 @@ void MeetingDetails::canceledMeeting(){
             emit notifyRefreshList();
             QMessageBox::information(this, "Requête exécutée avec succès !", "Vous ne serez pas à la réunion.");
             accept();
+        }
+    }
+}
+
+void MeetingDetails::deleteMeeting(){
+    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de supprimer cette réunion ?", QMessageBox::Yes | QMessageBox::No);
+    if(rep == QMessageBox::Yes){
+        bool ok = true;
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("DELETE FROM havemeeting WHERE meeting_id = :meeting_id");
+        req->bindValue(":meeting_id", meeting_id);
+        if(!req->exec()) ok = false;
+
+        req->prepare("DELETE FROM organizemeeting WHERE meeting_id = :meeting_id");
+        req->bindValue(":meeting_id", meeting_id);
+        if(!req->exec()) ok = false;
+
+        req->prepare("DELETE FROM meeting WHERE meeting_id = :meeting_id");
+        req->bindValue(":meeting_id", meeting_id);
+        if(!req->exec()) ok = false;
+
+        if(ok)
+        {
+            emit notifyRefreshList();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "Réunion annulée.");
+            accept();
+        }
+        else{
+            QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
         }
     }
 }
