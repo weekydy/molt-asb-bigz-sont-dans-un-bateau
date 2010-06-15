@@ -30,11 +30,13 @@ private:
     QComboBox *cb_equipments;
 
     QPushButton *btn_unavailable;
+    QPushButton *btn_del;
     QPushButton *btn_action;
     QPushButton *btn_cancel;
 
 private slots:
     void canceledMeeting();
+    void deleteMeeting();
 
 signals:
     void notifyRefreshList();
