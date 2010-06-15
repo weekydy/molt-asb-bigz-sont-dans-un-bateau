@@ -143,6 +143,11 @@ void TabItemNews::refreshListEvent(){
             periodic = "Mensuel";
         }
 
+        req->prepare("SELECT * FROM organizemeeting om INNER JOIN user u ON om.user_id = u.user_id WHERE om.meeting_id = :meeting_id ORDER BY user_surname, user_name");
+        req->bindValue(":meeting_id", id_meeting);
+        req->exec();
+        rec = req->record();
+        req->first();
         QString organizer = req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString();
 
         QPushButton *btn_accept = new QPushButton("Participera");

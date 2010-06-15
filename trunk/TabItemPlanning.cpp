@@ -143,7 +143,14 @@ void TabItemPlanning::refreshList(){
             if(req->value(rec.indexOf("meeting_periodic")).toInt() == 1)
             {
                 QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
-                if(meeting_begin.daysTo(date.getDate()) % 7 != 0)
+                if(!meeting_begin.dayOfWeek() == date.dayOfWeek())
+                    continue;
+            }
+            // Si c'est un rendez-vous periodique mensuel.
+            else if(req->value(rec.indexOf("meeting_periodic")).toInt() == 2)
+            {
+                QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+                if(!meeting_begin.daysTo(date) % 28 == 0)
                     continue;
             }
 
@@ -217,6 +224,23 @@ void TabItemPlanning::refreshList(){
             int colour = 0;
             int noCol = date.dayOfWeek() - 1;
             while(req->next()){
+                // Si c'est un rendez-vous periodique hebdomadaire.
+                if(req->value(rec.indexOf("meeting_periodic")).toInt() == 1)
+                {
+                    QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+                    if(!meeting_begin.dayOfWeek() == date.dayOfWeek())
+                        continue;
+                }
+                // Si c'est un rendez-vous periodique mensuel.
+                else if(req->value(rec.indexOf("meeting_periodic")).toInt() == 2)
+                {
+                    QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+                    if(!meeting_begin.daysTo(date) % 28 == 0)
+                        continue;
+                }
+
+
+
                 QString datetime_b = req->value(rec.indexOf("meeting_begin")).toString();
                 QString datetime_e = req->value(rec.indexOf("meeting_end")).toString();
 
@@ -277,6 +301,11 @@ void TabItemPlanning::refreshList(){
         int i = 1;
         int nbDaysUseless = 0;
         while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless){ // on parcours le mois
+
+
+
+
+
             qDebug() << date.dayOfWeek() << " " << i << " " << nbDaysInMonth + nbDaysUseless;
             if(date.month() != date_backup.month()){ nbDaysUseless++; }
             qDebug() << date.toString("yyyy-MM-dd");
@@ -293,6 +322,23 @@ void TabItemPlanning::refreshList(){
             req->bindValue(":state", 1);
             req->exec();
             rec = req->record();
+
+
+            // Si c'est un rendez-vous periodique hebdomadaire.
+            if(req->value(rec.indexOf("meeting_periodic")).toInt() == 1)
+            {
+                QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+                if(!meeting_begin.dayOfWeek() == date.dayOfWeek())
+                    continue;
+            }
+            // Si c'est un rendez-vous periodique mensuel.
+            else if(req->value(rec.indexOf("meeting_periodic")).toInt() == 2)
+            {
+                QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+                if(!meeting_begin.daysTo(date) % 28 == 0)
+                    continue;
+            }
+
 
             int noCol = date.dayOfWeek() - 1;
             QString data(date.toString("d MMM")+" :\n\n");

@@ -22,6 +22,8 @@ private:
     QLabel *lb_begin;
     QLabel *lb_end;
 
+    QComboBox *cb_organizer;
+
     QComboBox *cb_users;
 
     QLabel *lb_room;
