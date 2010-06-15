@@ -29,15 +29,15 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
         QIcon icon;
         if(req->value(rec.indexOf("hm_state")).toInt() == -1)
         {
-            cb_users->addItem(QIcon(":not_attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+            cb_users->addItem(QIcon(":not_attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString(), req->value(rec.indexOf("user_id")).toInt());
         }
         else if(req->value(rec.indexOf("hm_state")).toInt() == 1)
         {
-            cb_users->addItem(QIcon(":attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+            cb_users->addItem(QIcon(":attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString(), req->value(rec.indexOf("user_id")).toInt());
         }
         else
         {
-            cb_users->addItem(QIcon(":may_attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_surname")).toString(), req->value(rec.indexOf("user_id")).toInt());
+            cb_users->addItem(QIcon(":may_attend.png"), req->value(rec.indexOf("user_surname")).toString() + " " + req->value(rec.indexOf("user_name")).toString(), req->value(rec.indexOf("user_id")).toInt());
         }
     }
 
