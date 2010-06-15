@@ -324,14 +324,19 @@ void MeetingActions::makeAction(){
         periodicity = "2";
 
     if (missingFields == ""){
+
+        QString state = "0";
+        if (qcb_compulsory->isChecked())
+            state = "1";
         //Requette retournant toutes les réunions à un jour donné
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, :periodicity)");
+        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, :periodicity, :state)");
         req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":label", le_label->text());
         req->bindValue(":room", cb_room->currentIndex());
         req->bindValue(":periodicity", periodicity);
+        req->bindValue(":state", state);
         req->exec();
 
         req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");
@@ -361,9 +366,6 @@ void MeetingActions::makeAction(){
                     list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
             }
         }
-        QString state = "0";
-        if (qcb_compulsory->isChecked())
-            state = "1";
         foreach (int user_id_to, list_users_id)
         {
             if (user_id_to != id) {
