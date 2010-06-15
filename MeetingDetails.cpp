@@ -18,6 +18,17 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     lb_begin = new QLabel(QDateTime::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm").toString("dd/MM/yyyy hh:mm"));
     lb_end = new QLabel(QDateTime::fromString(req->value(rec.indexOf("meeting_end")).toString(), "yyyy-MM-dd hh:mm").toString("dd/MM/yyyy hh:mm"));
 
+
+    btn_unavailable = new QPushButton("Ne sera pas présent");
+    btn_action = new QPushButton("Ok");
+    btn_cancel = new QPushButton("&Annuler");
+
+    if(req->value(rec.indexOf("meeting_compulsary")).toInt() == 1)
+    {
+        btn_unavailable->setDisabled(true);
+        btn_unavailable->setToolTip("Cette réunion est obligatoire.");
+    }
+
     cb_users = new QComboBox();
 
     req->prepare("SELECT * FROM meeting m INNER JOIN havemeeting hm ON m.meeting_id = hm.meeting_id INNER JOIN user u ON u.user_id = hm.user_id WHERE m.meeting_id = :meeting_id ORDER BY hm.hm_state DESC, user_surname, user_name");
@@ -73,9 +84,6 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     fl_data->addRow("Salle:", lb_room);
     fl_data->addRow("Equipement(s):", cb_equipments);
 
-    btn_unavailable = new QPushButton("Ne sera pas présent");
-    btn_action = new QPushButton("Ok");
-    btn_cancel = new QPushButton("&Annuler");
 
 
 
