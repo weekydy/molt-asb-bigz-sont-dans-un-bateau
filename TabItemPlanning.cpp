@@ -128,7 +128,7 @@ void TabItemPlanning::refreshList(){
 
         QSqlQuery *req = new QSqlQuery();
         QSqlRecord rec;
-        req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE hm.hm_state = :state AND u.user_id = :user_id AND strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day ORDER BY meeting_begin");
+        req->prepare("SELECT * FROM user u INNER JOIN havemeeting hm ON u.user_id = hm.user_id INNER JOIN meeting m ON m.meeting_id = hm.meeting_id INNER JOIN room r ON r.room_id = m.room_id WHERE hm.hm_state = :state AND u.user_id = :user_id AND ((strftime('%Y', m.meeting_begin) = :year AND strftime('%m', m.meeting_begin) = :month AND strftime('%d', m.meeting_begin) = :day) OR (m.meeting_periodic > 0)) ORDER BY meeting_begin");
         req->bindValue(":user_id", user_id);
         req->bindValue(":year", date_y_m_d.at(0));
         req->bindValue(":month", date_y_m_d.at(1));
@@ -139,11 +139,22 @@ void TabItemPlanning::refreshList(){
 
         int colour = 0;
         while(req->next()){
+            // Si c'est un rendez-vous periodique hebdomadaire.
+            if(req->value(rec.indexOf("meeting_periodic")).toInt() == 1)
+            {
+                QDate meeting_begin = QDate::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+                if(meeting_begin.daysTo(date.getDate()) % 7 != 0)
+                    continue;
+            }
+
+
+
             QString datetime_b = req->value(rec.indexOf("meeting_begin")).toString();
             QString datetime_e = req->value(rec.indexOf("meeting_end")).toString();
 
             QStringList time_b = datetime_b.split(" ").at(1).split(":"); // ["hh", "mm"]
             QStringList time_e = datetime_e.split(" ").at(1).split(":");
+
 
             int noRow_b = (time_b.at(0).toInt() - 8) * 4 + time_b.at(1).toInt() / 15; // numéro de la ligne où le RV commence
             int noRow_e = ((time_e.at(0).toInt() - 8) * 4 + time_e.at(1).toInt() / 15) - 1; // numéro de la ligne où le RV termine, -1 : [8h00 - 10h30] => 10h30 - 10h45 non compris
