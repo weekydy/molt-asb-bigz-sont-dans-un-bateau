@@ -22,6 +22,9 @@ private:
     QLabel *lb_begin;
     QLabel *lb_end;
 
+    QTimeEdit *te_duration;
+    QPushButton *btn_editDuration;
+
     QComboBox *cb_organizer;
 
     QComboBox *cb_users;
@@ -37,6 +40,7 @@ private:
 private slots:
     void canceledMeeting();
     void deleteMeeting();
+    void editDuration();
 
 signals:
     void notifyRefreshList();

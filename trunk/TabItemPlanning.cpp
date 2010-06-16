@@ -77,7 +77,6 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
     connect(view, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(displayInfo()));
     connect(btn_add, SIGNAL(clicked()), this, SLOT(addMeeting()));
 
-
 }
 
 void TabItemPlanning::refreshList(){
@@ -355,7 +354,7 @@ void TabItemPlanning::refreshList(){
 void TabItemPlanning::displayInfo(){
     QModelIndex index = view->selectionModel()->currentIndex();
     if(index.isValid()){
-        if(cb_view->currentText() != "Mois")
+        if(cb_view->currentText() != "Mois" && model->itemFromIndex(index)->text() != "")
         {
             Meeting m = model->item(index.row(), index.column())->data().value<Meeting>();
             MeetingDetails *meeting_details = new MeetingDetails(user_id, m.id());
