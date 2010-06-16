@@ -43,7 +43,7 @@ void TabItemTools::refreshList(){
         }
         else
         {
-            QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !\n" + req->lastError().text());
+            QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
         }
     }
 }
