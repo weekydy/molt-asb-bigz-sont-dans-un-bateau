@@ -101,7 +101,7 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
 
         QDateTime meeting_begin = QDateTime::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
 
-        if(QDateTime::currentDateTime().daysTo(meeting_begin) < 7 && req->value(rec.indexOf("meeting_periodic")).toInt() == 0)
+        if(QDateTime::currentDateTime().daysTo(meeting_begin) <= 7 && req->value(rec.indexOf("meeting_periodic")).toInt() == 0)
         {
             btn_del->setToolTip("Impossible de supprimer le rendez-vous moins d'une semaine avant.");
         }

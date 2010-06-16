@@ -50,13 +50,13 @@ CREATE TABLE meeting(
 	FOREIGN KEY('room_id') REFERENCES 'room' ('room_id')
 );
 
-INSERT INTO meeting VALUES(null, '4', '2010-06-21 08:00', '2010-06-21 11:00', 'Retraite de Jean-Paul', '0', '0', );
-INSERT INTO meeting VALUES(null, '4', '2010-06-21 13:00', '2010-06-21 14:30', 'Anniversaire de George', '0', '0');
-INSERT INTO meeting VALUES(null, '2', '2010-06-22 09:00', '2010-06-22 11:30', 'Réunion hebdomadaire LO45', '1', '1');
-INSERT INTO meeting VALUES(null, '2', '2010-06-22 15:30', '2010-06-22 17:30', 'Bambo Clash hebdomadaire', '1', '0');
-INSERT INTO meeting VALUES(null, '2', '2010-06-23 08:00', '2010-06-23 10:30', 'Réunion mensuelle finance', '2', '0');
-INSERT INTO meeting VALUES(null, '2', '2010-06-23 13:00', '2010-06-23 15:00', 'Lancement nouveau projet R&D', '0', '1');
-INSERT INTO meeting VALUES(null, '4', '2010-06-24 13:00', '2010-06-24 15:00', 'Réunion mensuelle GI02', '2', '0');
+INSERT INTO meeting VALUES(null, '4', '2010-06-21 08:00', '2010-06-21 11:00', 'Retraite de Jean-Paul', '0', '0', '#668cd9');
+INSERT INTO meeting VALUES(null, '4', '2010-06-21 13:00', '2010-06-21 14:30', 'Anniversaire de George', '0', '0', '#dd5511');
+INSERT INTO meeting VALUES(null, '2', '2010-06-22 09:00', '2010-06-22 11:30', 'Réunion hebdomadaire LO45', '1', '1', '#dd4477');
+INSERT INTO meeting VALUES(null, '2', '2010-06-22 15:30', '2010-06-22 17:30', 'Bambo Clash hebdomadaire', '1', '0', '#109618');
+INSERT INTO meeting VALUES(null, '2', '2010-06-23 08:00', '2010-06-23 10:30', 'Réunion mensuelle finance', '2', '0', '#b08b59');
+INSERT INTO meeting VALUES(null, '2', '2010-06-23 13:00', '2010-06-23 15:00', 'Lancement nouveau projet R&D', '0', '1', '#fad163');
+INSERT INTO meeting VALUES(null, '4', '2010-06-24 13:00', '2010-06-24 15:00', 'Réunion mensuelle GI02', '2', '0', '#fad163');
 
 CREATE TABLE grp(
 	grp_id integer PRIMARY KEY AUTOINCREMENT,
