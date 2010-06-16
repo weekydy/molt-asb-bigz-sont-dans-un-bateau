@@ -15,9 +15,31 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     req->next();
 
     lb_label = new QLabel(req->value(rec.indexOf("meeting_label")).toString());
-    lb_begin = new QLabel(QDateTime::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm").toString("dd/MM/yyyy hh:mm"));
-    lb_end = new QLabel(QDateTime::fromString(req->value(rec.indexOf("meeting_end")).toString(), "yyyy-MM-dd hh:mm").toString("dd/MM/yyyy hh:mm"));
 
+    QDateTime datetime_begin = QDateTime::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+    QDateTime datetime_end = QDateTime::fromString(req->value(rec.indexOf("meeting_end")).toString(), "yyyy-MM-dd hh:mm");
+
+    lb_begin = new QLabel(datetime_begin.toString("dd/MM/yyyy hh:mm"));
+    lb_end = new QLabel(datetime_end.toString("dd/MM/yyyy hh:mm"));
+
+
+    QTime duration(datetime_end.time().hour() - datetime_begin.time().hour(), datetime_end.time().minute() - datetime_begin.time().minute(), 0, 0);
+    te_duration = new QTimeEdit();
+    te_duration->setDisplayFormat("hh:mm");
+    te_duration->setTime(duration);
+    te_duration->setMaximumTime(duration);
+    te_duration->setDisabled(true);
+
+    btn_editDuration = new QPushButton("MAJ");
+    btn_editDuration->setDisabled(true);
+    btn_editDuration->setToolTip("Seul les organisateurs de la réunion peuvent modifier la durée de la réunion.");
+
+    QHBoxLayout *hbl_duration = new QHBoxLayout();
+    hbl_duration->addWidget(te_duration);
+    hbl_duration->addWidget(btn_editDuration);
+
+    QWidget *widget_duration = new QWidget();
+    widget_duration->setLayout(hbl_duration);
 
     btn_unavailable = new QPushButton("Ne sera pas présent");
     btn_action = new QPushButton("Ok");
@@ -39,7 +61,6 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     req->exec();
     rec = req->record();
     while(req->next()){
-        qDebug() << req->value(rec.indexOf("hm_state")).toInt();
         QIcon icon;
         if(req->value(rec.indexOf("hm_state")).toInt() == -1)
         {
@@ -82,6 +103,7 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     fl_data->addRow("Libellé:", lb_label);
     fl_data->addRow("Début:", lb_begin);
     fl_data->addRow("Fin:", lb_end);
+    fl_data->addRow("Durée:", widget_duration);
     fl_data->addRow("Organisateur(s):", cb_organizer);
     fl_data->addRow("Invité(s):", cb_users);
     fl_data->addRow("Salle:", lb_room);
@@ -98,6 +120,12 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
     {
         btn_unavailable->setDisabled(true);
         btn_unavailable->setToolTip("En tant qu'organisateur, vous êtes contraint d'assister à cette réunion.");
+
+        te_duration->setDisabled(false);
+        btn_editDuration->setDisabled(false);
+        btn_editDuration->setToolTip("Cette action sera irréversible.");
+
+        connect(btn_editDuration, SIGNAL(clicked()), this, SLOT(editDuration()));
 
         QDateTime meeting_begin = QDateTime::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
 
@@ -185,5 +213,45 @@ void MeetingDetails::deleteMeeting(){
         else{
             QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
         }
+    }
+}
+
+void MeetingDetails::editDuration()
+{
+    int nb_quarter = te_duration->time().hour() * 4;
+    nb_quarter += te_duration->time().minute() / 15;
+
+    if(nb_quarter != 0)
+    {
+
+        QSqlQuery *req = new QSqlQuery();
+        req->prepare("SELECT meeting_begin FROM meeting WHERE meeting_id = :meeting_id");
+        req->bindValue(":meeting_id", meeting_id);
+        req->exec();
+        req->first();
+
+        QDateTime meeting_end = QDateTime::fromString(req->value(0).toString(), "yyyy-MM-dd hh:mm");
+        meeting_end.setTime(QTime(meeting_end.time().hour() + nb_quarter / 4, meeting_end.time().minute() + (nb_quarter % 4) * 15, 0, 0));
+
+        te_duration->setTime(QTime(nb_quarter / 4, (nb_quarter % 4) * 15));
+
+        req->prepare("UPDATE meeting SET meeting_end = :meeting_end WHERE meeting_id = :meeting_id");
+        req->bindValue(":meeting_id", meeting_id);
+        req->bindValue(":meeting_end", meeting_end.toString("yyyy-MM-dd hh:mm"));
+
+        if(req->exec())
+        {
+            lb_end->setText(meeting_end.toString("dd/MM/yyyy hh:mm"));
+            emit notifyRefreshList();
+            QMessageBox::information(this, "Requête exécutée avec succès !", "La réunion se terminera à " + lb_end->text());
+        }
+        else
+        {
+            QMessageBox::warning(this, "Erreur !", "La requête n'a pas pu être exécutée !");
+        }
+    }
+    else
+    {
+        QMessageBox::warning(this, "Erreur !", "Durée nulle impossible.");
     }
 }
