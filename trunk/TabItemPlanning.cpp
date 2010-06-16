@@ -53,14 +53,6 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
                 << hour + "h45";
     }
 
-    colours = new QList<QColor>();
-    colours->push_back(QColor(102, 140, 217)); // bleu
-    colours->push_back(QColor(221, 68, 119)); // rose
-    colours->push_back(QColor(16, 150, 24)); //vert
-    colours->push_back(QColor(221, 85, 17)); // orange
-    colours->push_back(QColor(176, 139, 89)); // marron
-    colours->push_back(QColor(250, 209, 99)); // jaune
-
     refreshList();
 
     btn_add = new QPushButton("Organiser une réunion");
@@ -137,7 +129,6 @@ void TabItemPlanning::refreshList(){
         req->exec();
         rec = req->record();
 
-        int colour = 0;
         while(req->next()){
 
             // Si c'est un rendez-vous periodique hebdomadaire.
@@ -176,17 +167,19 @@ void TabItemPlanning::refreshList(){
                 QStandardItem *item = new QStandardItem();
                 if(pos == 0){ item->setText(req->value(rec.indexOf("meeting_label")).toString()); }
 
+                QColor color;
+                color.setNamedColor(req->value(rec.indexOf("meeting_color")).toString());
+
                 QVariant data;
                 data.setValue(m);
                 item->setData(data);
-                item->setBackground(colours->at(colour));
+                item->setBackground(color);
 
                 model->setItem(noRow_b + pos, 0, item);
             }
 
             view->setSpan(noRow_b, 0, duration, 1);
 
-            colour++;
         }
     }
     else if(index == 1){ // week
@@ -221,7 +214,6 @@ void TabItemPlanning::refreshList(){
             req->exec();
             rec = req->record();
 
-            int colour = 0;
             int noCol = date.dayOfWeek() - 1;
             while(req->next()){
                 // Si c'est un rendez-vous periodique hebdomadaire.
@@ -238,8 +230,6 @@ void TabItemPlanning::refreshList(){
                     if(meeting_begin.date().daysTo(date) % 28 != 0 || meeting_begin.date().daysTo(date) < 0)
                         continue;
                 }
-
-
 
                 QString datetime_b = req->value(rec.indexOf("meeting_begin")).toString();
                 QString datetime_e = req->value(rec.indexOf("meeting_end")).toString();
@@ -261,17 +251,19 @@ void TabItemPlanning::refreshList(){
                     QStandardItem *item = new QStandardItem();
                     if(pos == 0){ item->setText(req->value(rec.indexOf("meeting_label")).toString()); }
 
+                    QColor color;
+                    color.setNamedColor(req->value(rec.indexOf("meeting_color")).toString());
+
                     QVariant data;
                     data.setValue(m);
                     item->setData(data);
-                    item->setBackground(colours->at(colour));
+                    item->setBackground(color);
 
                     model->setItem(noRow_b + pos, noCol, item);
                 }
 
                 view->setSpan(noRow_b, noCol, duration, 1);
 
-                colour++;
             }
             if(date.dayOfWeek() == 7){ ok = false; } // incrementation
             else date = date.addDays(1);
@@ -301,10 +293,6 @@ void TabItemPlanning::refreshList(){
         int i = 1;
         int nbDaysUseless = 0;
         while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless){ // on parcours le mois
-
-
-
-
 
             qDebug() << date.dayOfWeek() << " " << i << " " << nbDaysInMonth + nbDaysUseless;
             if(date.month() != date_backup.month()){ nbDaysUseless++; }
@@ -358,7 +346,6 @@ void TabItemPlanning::refreshList(){
             qDebug() << "jour : " << date.toString("dd-MM-yyyy");
             date = date.addDays(1);
             i++;
-
         }
     }
     view->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
