@@ -17,5 +17,6 @@
         <file alias="orange.png">img/orange.png</file>
         <file alias="pink.png">img/pink.png</file>
         <file alias="yellow.png">img/yellow.png</file>
+        <file alias="trophe.png">img/trophe.png</file>
     </qresource>
 </RCC>

@@ -3,6 +3,8 @@
 
 MainWindow::MainWindow()
 {
+    setWindowIcon(QPixmap(":trophe.png"));
+
     user_id = -1;
     access = OFFLINE;
 
@@ -139,7 +141,7 @@ void MainWindow::createWidgets(){
 }
 
 void MainWindow::about(){
-    QMessageBox::about(this, "A propos...", "Projet LO45 2010");
+    QMessageBox::about(this, "A propos...", "<b>Major Agenda©</b>, du moins ça serait bien. <br/><br/> Version Beta 0.76 (32bits)<br/> Copyright 2010 Dream Team UTBM. Tous droits réservés.<br/><br/>Développé à l'aide de Qt 4.6.2, SQLite 3.2 et compilé par MinGW gcc 4.4. <br/><br/> Développement par : Adrien GAVIGNET / Bastien CRAMILLET / Jérémy MALTIS <br/><br/> Projet encouragé par Google Agenda (papa comme on l'appel). <br/><br/> Nous tenons à remercier nos parents, sans eux, tout ce talent ne serait pas ici aujourd'hui, ainsi que nos fans, qui se battent désormais par millier pour avoir une version dédicacée de cette application.");
 }
 
 void MainWindow::updateConnected(int _user_id, int _access){
