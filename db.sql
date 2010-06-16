@@ -46,11 +46,11 @@ CREATE TABLE meeting(
 	meeting_label varchar,
 	meeting_periodic integer,
 	meeting_compulsary integer,
-	
+	meeting_color varchar,
 	FOREIGN KEY('room_id') REFERENCES 'room' ('room_id')
 );
 
-INSERT INTO meeting VALUES(null, '4', '2010-06-21 08:00', '2010-06-21 11:00', 'Retraite de Jean-Paul', '0', '0');
+INSERT INTO meeting VALUES(null, '4', '2010-06-21 08:00', '2010-06-21 11:00', 'Retraite de Jean-Paul', '0', '0', );
 INSERT INTO meeting VALUES(null, '4', '2010-06-21 13:00', '2010-06-21 14:30', 'Anniversaire de George', '0', '0');
 INSERT INTO meeting VALUES(null, '2', '2010-06-22 09:00', '2010-06-22 11:30', 'Réunion hebdomadaire LO45', '1', '1');
 INSERT INTO meeting VALUES(null, '2', '2010-06-22 15:30', '2010-06-22 17:30', 'Bambo Clash hebdomadaire', '1', '0');

@@ -89,18 +89,27 @@ MeetingDetails::MeetingDetails(int _user_id, int _meeting_id, QWidget *parent) :
 
 
 
-
-    req->prepare("SELECT * FROM organizemeeting WHERE user_id = :user_id AND meeting_id = :meeting_id");
+    req->prepare("SELECT * FROM organizemeeting om INNER JOIN meeting m ON om.meeting_id = m.meeting_id WHERE user_id = :user_id AND m.meeting_id = :meeting_id");
     req->bindValue(":user_id", user_id);
     req->bindValue(":meeting_id", meeting_id);
     req->exec();
+    rec = req->record();
     if(req->first())
     {
         btn_unavailable->setDisabled(true);
         btn_unavailable->setToolTip("En tant qu'organisateur, vous êtes contraint d'assister à cette réunion.");
 
-        btn_del->setDisabled(false);
-        btn_del->setToolTip("Ceci est une action irréversible.");
+        QDateTime meeting_begin = QDateTime::fromString(req->value(rec.indexOf("meeting_begin")).toString(), "yyyy-MM-dd hh:mm");
+
+        if(QDateTime::currentDateTime().daysTo(meeting_begin) < 7 && req->value(rec.indexOf("meeting_periodic")).toInt() == 0)
+        {
+            btn_del->setToolTip("Impossible de supprimer le rendez-vous moins d'une semaine avant.");
+        }
+        else
+        {
+            btn_del->setDisabled(false);
+            btn_del->setToolTip("Ceci est une action irréversible.");
+        }
 
         connect(btn_del, SIGNAL(clicked()), this, SLOT(deleteMeeting()));
     }
@@ -143,10 +152,18 @@ void MeetingDetails::canceledMeeting(){
 }
 
 void MeetingDetails::deleteMeeting(){
-    int rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de supprimer cette réunion ?", QMessageBox::Yes | QMessageBox::No);
+    QSqlQuery *req = new QSqlQuery();
+    req->prepare("SELECT meeting_periodic FROM meeting WHERE meeting_id = :meeting_id AND meeting_periodic > 0");
+    req->bindValue(":meeting_id", meeting_id);
+    req->exec();
+    int rep;
+    if(req->first())
+        rep = QMessageBox::question(this, "Confirmation", "Ceci est une réunion périodique, êtes-vous certain de supprimer toutes ces réunions ?", QMessageBox::Yes | QMessageBox::No);
+    else
+        rep = QMessageBox::question(this, "Confirmation", "Etes-vous sûr de supprimer cette réunion ?", QMessageBox::Yes | QMessageBox::No);
+
     if(rep == QMessageBox::Yes){
         bool ok = true;
-        QSqlQuery *req = new QSqlQuery();
         req->prepare("DELETE FROM havemeeting WHERE meeting_id = :meeting_id");
         req->bindValue(":meeting_id", meeting_id);
         if(!req->exec()) ok = false;
