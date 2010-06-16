@@ -296,7 +296,8 @@ void MeetingActions::findHours () {
 
 void MeetingActions::findRoom () {
     bool guest = qcb_guest->isChecked();
-    //bool equipment = qcb_equipment->isChecked();
+    bool equipment = qcb_equipment->isChecked();
+    QList<int> list_id_equipment;
     QSqlQuery *req = new QSqlQuery();
     QSet<int> list_users_id;
     for(int i = 0; i < lw_targets->count(); i++)
@@ -321,7 +322,19 @@ void MeetingActions::findRoom () {
                 list_users_id.insert(lw_targets->item(i)->data(Qt::UserRole).toInt());
         }
     }
-    int id_room = engine->findRoom(list_users_id.size(), guest);
+    for (int i = 0; i < list_equipments->count(); ++i) {
+        if (list_equipments->itemData(i).toBool()) {
+            // on recupere l'id de l'equipement
+            req->prepare("SELECT equip_id FROM equipment WHERE equip_name = :name");
+            req->bindValue(":name", list_equipments->itemText(i));
+            req->exec();
+            req->first();
+            int id_equipment = req->value(0).toInt();
+            list_id_equipment.append(id_equipment);
+        }
+    }
+
+    int id_room = engine->findRoom(list_users_id.size(), guest, list_id_equipment, equipment);
     cb_room->setCurrentIndex(id_room);
     QString text_result = "La salle " + cb_room->currentText() + " est faite pour vous.";
     QMessageBox::information(this, "Résultat de la recherche", text_result);
@@ -374,13 +387,14 @@ void MeetingActions::makeAction(){
             state = "1";
         //Requette retournant toutes les réunions à un jour donné
         QSqlQuery *req = new QSqlQuery();
-        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, :periodicity, :state)");
+        req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, :periodicity, :state, :color)");
         req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":label", le_label->text());
         req->bindValue(":room", cb_room->currentIndex());
         req->bindValue(":periodicity", periodicity);
         req->bindValue(":state", state);
+        req->bindValue(":color", cb_colors->itemData(cb_colors->currentIndex(), Qt::UserRole));
         req->exec();
 
         req->prepare("SELECT * FROM meeting m ORDER BY m.meeting_id DESC");

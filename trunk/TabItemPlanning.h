@@ -8,6 +8,7 @@
 #include "Commons.h"
 #include "MeetingActions.h"
 #include "MeetingDetails.h"
+#include "SolutionsEngine.h"
 
 class TabItemPlanning : public QWidget
 {
@@ -24,6 +25,9 @@ private:
     QPushButton *btn_add;
     QStringList hours;
     QList<QColor> *colours;
+    QLabel *rate;
+
+    SolutionsEngine* engine;
 
 private slots:
     void createMenu(QPoint pos);
