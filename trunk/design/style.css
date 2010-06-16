@@ -17,12 +17,12 @@ QDialog
 }
 
 /* Line Edit */
-QLineEdit {
+QLineEdit, QTextEdit {
 	padding: 1px;
 	border: 2px solid #528595;
 	border-radius: 6px;
 }
-QLineEdit:focus
+QLineEdit:focus, QTextEdit:focus
 {
 	border: 2px solid #01A4FF;
 }
