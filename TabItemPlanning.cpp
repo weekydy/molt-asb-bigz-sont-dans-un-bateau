@@ -23,6 +23,8 @@ Q_DECLARE_METATYPE(Meeting)
 
 TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent)
 {
+    engine = new SolutionsEngine();
+
     user_id = _user_id;
     model = new QStandardItemModel();
     view = new QTableView();
@@ -53,14 +55,19 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
                 << hour + "h45";
     }
 
-    refreshList();
-
     btn_add = new QPushButton("Organiser une réunion");
+
+    QString text_rate = "Taux d'occuptation cette semaine :" + QString::number(engine->rateUser(QDate::currentDate(), user_id)) + "%";
+    rate = new QLabel(text_rate);
+    rate->setAlignment(Qt::AlignHCenter);
+
+    refreshList();
 
     QVBoxLayout *layout_tools = new QVBoxLayout();
     layout_tools->addWidget(calendar);
     layout_tools->addWidget(cb_view);
     layout_tools->addWidget(btn_add);
+    layout_tools->addWidget(rate);
     layout_tools->addStretch();
 
 
@@ -80,9 +87,14 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
 }
 
 void TabItemPlanning::refreshList(){
+
     int index = cb_view->currentIndex();
     QDate date = calendar->selectedDate();
 
+    if(date.isValid()) {
+        QString text_rate = "Taux d'occuptation cette semaine :" + QString::number(engine->rateUser(date, user_id)) + "%";
+        rate->setText(text_rate);
+    }
 
     QStandardItemModel *tmp = model;
     model = new QStandardItemModel();
@@ -161,8 +173,6 @@ void TabItemPlanning::refreshList(){
             for(int pos = 0; pos < duration; pos++){
                 Meeting m(req->value(rec.indexOf("meeting_id")).toInt(), pos, duration);
 
-                qDebug() << m.id() << m.pos() << m.size();
-
                 QStandardItem *item = new QStandardItem();
                 if(pos == 0){ item->setText(req->value(rec.indexOf("meeting_label")).toString()); }
 
@@ -198,7 +208,6 @@ void TabItemPlanning::refreshList(){
 
         bool ok = true;
         while(date.dayOfWeek() <= 7 && ok){ // on parcourt la semaine (1 à 7)
-            qDebug() << date.toString("yyyy-MM-dd");
 
             QStringList date_y_m_d = date.toString("yyyy-MM-dd").split("-");
 
@@ -244,8 +253,6 @@ void TabItemPlanning::refreshList(){
 
                 for(int pos = 0; pos < duration; pos++){
                     Meeting m(req->value(rec.indexOf("meeting_id")).toInt(), pos, duration);
-
-                    qDebug() << m.id() << m.pos() << m.size();
 
                     QStandardItem *item = new QStandardItem();
                     if(pos == 0){ item->setText(req->value(rec.indexOf("meeting_label")).toString()); }
@@ -293,9 +300,7 @@ void TabItemPlanning::refreshList(){
         int nbDaysUseless = 0;
         while(date.dayOfWeek() != 7 || i < nbDaysInMonth + nbDaysUseless){ // on parcours le mois
 
-            qDebug() << date.dayOfWeek() << " " << i << " " << nbDaysInMonth + nbDaysUseless;
             if(date.month() != date_backup.month()){ nbDaysUseless++; }
-            qDebug() << date.toString("yyyy-MM-dd");
 
             QStringList date_y_m_d = date.toString("yyyy-MM-dd").split("-");
 
@@ -336,13 +341,10 @@ void TabItemPlanning::refreshList(){
 
                 data += time_b.at(0) + ":" + time_b.at(1) + " " + req->value(rec.indexOf("meeting_label")).toString() + "\n";
             }
-            qDebug() << data;
             QStandardItem *item = new QStandardItem();
             item->setText(data);
 
             model->setItem(((i - 1) / 7), noCol, item);
-
-            qDebug() << "jour : " << date.toString("dd-MM-yyyy");
             date = date.addDays(1);
             i++;
         }

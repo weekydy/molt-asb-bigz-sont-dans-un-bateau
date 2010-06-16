@@ -100,6 +100,7 @@ void MainWindow::createWidgets(){
             tabWidget->addTab(new TabItemGroup(), "Groupes");
             tabWidget->addTab(new TabItemRoom(), "Salles");
             tabWidget->addTab(new TabItemEquipment(), "Equipements");
+            tabWidget->addTab(new TabItemTools(), "Outils d'administration");
         }
 
         QVBoxLayout *layout_central = new QVBoxLayout();

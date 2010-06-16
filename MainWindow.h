@@ -16,6 +16,7 @@
 #include "TabItemNews.h"
 #include "TabItemGroup.h"
 #include "TabItemProfile.h"
+#include "TabItemTools.h"
 
 
 using namespace std;
