@@ -170,7 +170,7 @@ QComboBox {
      border-radius: 3px;
      padding: 1px 18px 1px 3px;
      min-width: 6em;
-	 background:QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255));
+	 /*background:QRadialGradient(spread:pad, cx:0.721427, cy:0.267, radius:0.702, fx:0.721, fy:0.267409, stop:0 rgba(189, 232, 255, 255), stop:1 rgba(114, 185, 207, 255));*/
  }
 
  QComboBox:editable {
