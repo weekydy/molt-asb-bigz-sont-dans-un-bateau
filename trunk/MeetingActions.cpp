@@ -130,9 +130,19 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     fl_hour->addRow("Début :", dt_begin2);
     fl_hour->addRow("Durée :", qte_duration);
 
+    cb_colors = new QComboBox();
+
+    cb_colors->addItem(QIcon(":blue.png"), "Bleu", "#668cd9");
+    cb_colors->addItem(QIcon(":pink.png"), "Rose", "#dd4477");
+    cb_colors->addItem(QIcon(":green.png"), "Vert", "#109618");
+    cb_colors->addItem(QIcon(":orange.png"), "Orange", "#dd5511");
+    cb_colors->addItem(QIcon(":brown.png"), "Marron", "#b08b59");
+    cb_colors->addItem(QIcon(":yellow.png"), "Jaune", "#fad163");
+
     fl_recurring = new QFormLayout;
     fl_recurring->addRow("Présence obligatoire :", qcb_compulsory);
     fl_recurring->addRow("Périodicité :", qcb_recurring);
+    fl_recurring->addRow("Couleur :", cb_colors);
 
     qgb_option->setLayout(fl_recurring);
 
