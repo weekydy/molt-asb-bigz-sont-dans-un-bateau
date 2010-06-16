@@ -113,7 +113,7 @@ QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room
         //Mise à jour du bitarray si le jour cherché est le jour courrant pour empècher la recherche avant l'heure courrante
         if (date.date() == QDate::currentDate()) {
             int noRow_c = (QTime::currentTime().hour() - 8) * 4 + QTime::currentTime().minute() / 15;
-            for (int i = 0; i < noRow_c && i < 48; ++i)
+            for (int i = 0; i <= noRow_c && i < 48; ++i)
                 qba_room.setBit(i, true);
         }
 
@@ -277,13 +277,15 @@ int SolutionsEngine::verif(QDateTime begin, QDateTime end, int id_room, QSet<int
     }
 
 
-
     int qba_room_size = ((end.time().hour() - 8) * 4);
+    qDebug() << qba_room_size;
     for (int i = ((begin.time().hour() - 8) * 4); i < qba_room_size; ++i)
     {
+        qDebug() << i;
         if (!qba_room[i])
         {
-            int time = ((i+end.time().hour() - 8) * 4);
+            int time = (i+((end.time().hour() - 8) * 4 - (begin.time().hour() - 8) * 4));
+            qDebug() << time;
             hour = i;
             for (int j = i; j < time; ++j)
             {

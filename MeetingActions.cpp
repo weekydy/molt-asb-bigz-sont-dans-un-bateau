@@ -12,13 +12,23 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 
     dt_begin = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_begin->setDisplayFormat("dd/MM/yyyy hh:mm");
+    dt_begin->setMinimumDate(QDate(QDate::currentDate().addDays(7)));
+    dt_begin->setMinimumTime(QTime(8,0,0,0));
+    dt_begin->setMaximumTime(QTime(19,45,0,0));
     dt_begin2 = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_begin2->setDisplayFormat("dd/MM/yyyy hh:mm");
+    dt_begin2->setMinimumDate(QDate(QDate::currentDate().addDays(7)));
+    dt_begin2->setMinimumTime(QTime(8,0,0,0));
+    dt_begin->setMaximumTime(QTime(19,45,0,0));
     dt_end = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_end->setDisplayFormat("dd/MM/yyyy hh:mm");
+    dt_end->setMinimumDate(QDate(QDate::currentDate().addDays(7)));
+    dt_end->setMinimumTime(QTime(8,15,0,0));
+    dt_end->setMaximumTime(QTime(20,0,0,0));
 
     qte_duration = new QTimeEdit();
     qte_duration->setDisplayFormat("hh:mm");
+    qte_duration->setTimeRange(QTime(0,15,0,0), QTime(12,0,0,0));
 
     /*list_users = new CheckBoxList();
     list_users->addItem("Choisissez :", false);
@@ -229,7 +239,8 @@ void MeetingActions::findHours () {
     QString missingFields("");
     if (cb_room->currentText() != "Automatique") {
         if (dt_begin2->date() >= QDate::currentDate()) {
-            if (qte_duration->time().hour() != 0 && qte_duration->time().hour() < 12) {
+            if ((qte_duration->time().hour() != 0 && qte_duration->time().hour() < 12) ||
+                (qte_duration->time().hour() == 0 && qte_duration->time().minute() >= 15)) {
                 bool available = qcb_available->isChecked();
                 bool extend = qcb_extend->isChecked();
                 QSqlQuery *req = new QSqlQuery();
