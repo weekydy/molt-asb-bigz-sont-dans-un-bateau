@@ -11,5 +11,11 @@
         <file alias="attend.png">img/attend.png</file>
         <file alias="may_attend.png">img/may_attend.png</file>
         <file alias="not_attend.png">img/not_attend.png</file>
+        <file alias="blue.png">img/blue.png</file>
+        <file alias="brown.png">img/brown.png</file>
+        <file alias="green.png">img/green.png</file>
+        <file alias="orange.png">img/orange.png</file>
+        <file alias="pink.png">img/pink.png</file>
+        <file alias="yellow.png">img/yellow.png</file>
     </qresource>
 </RCC>

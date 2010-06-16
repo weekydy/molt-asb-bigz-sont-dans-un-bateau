@@ -56,6 +56,8 @@ private:
     QCheckBox *qcb_available;
     QCheckBox *qcb_compulsory;
 
+    QComboBox *cb_colors;
+
     SolutionsEngine* engine;
 
     void moveCurrentItem(ListWidget *source, ListWidget *target);
