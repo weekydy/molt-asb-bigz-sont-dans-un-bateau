@@ -110,7 +110,8 @@ QDateTime SolutionsEngine::findHours(QDateTime date, QTime duration, int id_room
             }
         }
 
-        int noRow_c = (date.time().hour() - 8) * 4 + date.time().minute() / 15;
+        // Mise à jour du bitarray
+        int noRow_c = (date.time().hour() - 8) * 4 + date.time().minute() / 15 - 1;
         for (int i = 0; i <= noRow_c && i < 48; ++i)
             qba_room.setBit(i, true);
 
@@ -304,7 +305,7 @@ int SolutionsEngine::verif(QDateTime begin, QDateTime end, int id_room, QSet<int
     }
 
 
-    int qba_room_size = ((end.time().hour() - 8) * 4);
+    int qba_room_size = ((end.time().hour() - 8) * 4) + 1;
     for (int i = ((begin.time().hour() - 8) * 4); i < qba_room_size; ++i)
     {
         if (!qba_room[i])

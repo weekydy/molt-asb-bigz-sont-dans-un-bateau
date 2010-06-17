@@ -57,7 +57,7 @@ TabItemPlanning::TabItemPlanning(int _user_id, QWidget *parent) : QWidget(parent
 
     btn_add = new QPushButton("Organiser une réunion");
 
-    QString text_rate = "Taux d'occuptation cette semaine :" + QString::number(engine->rateUser(QDate::currentDate(), user_id)) + "%";
+    QString text_rate = "Taux d'occupation cette semaine :" + QString::number(engine->rateUser(QDate::currentDate(), user_id)) + "%";
     rate = new QLabel(text_rate);
     rate->setAlignment(Qt::AlignHCenter);
 
