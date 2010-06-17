@@ -10,16 +10,11 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 
     le_label = new QLineEdit();
 
-    dt_begin = new QDateTimeEdit(QDateTime::currentDateTime());
-    dt_begin->setDisplayFormat("dd/MM/yyyy hh:mm");
-    dt_begin->setMinimumDate(QDate(QDate::currentDate().addDays(7)));
-    dt_begin->setMinimumTime(QTime(8,0,0,0));
-    dt_begin->setMaximumTime(QTime(19,45,0,0));
     dt_begin2 = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_begin2->setDisplayFormat("dd/MM/yyyy hh:mm");
     dt_begin2->setMinimumDate(QDate(QDate::currentDate().addDays(7)));
     dt_begin2->setMinimumTime(QTime(8,0,0,0));
-    dt_begin->setMaximumTime(QTime(19,45,0,0));
+    dt_begin2->setMaximumTime(QTime(19,45,0,0));
     dt_end = new QDateTimeEdit(QDateTime::currentDateTime());
     dt_end->setDisplayFormat("dd/MM/yyyy hh:mm");
     dt_end->setMinimumDate(QDate(QDate::currentDate().addDays(7)));
@@ -118,22 +113,20 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
 
     qgb_frm = new QGroupBox("Détails de la réunion");
     qgb_room = new QGroupBox("Recherche de salle");
-    qgb_hour = new QGroupBox("Recherche de crénau");
+    qgb_hour = new QGroupBox("Recherche de créneau");
     qgb_option = new QGroupBox("Autres options");
 
-    qcb_guest = new QCheckBox("Adapté au nombre d'invités");
-    qcb_equipment = new QCheckBox("Adapté aux équipements");
+    qcb_guest = new QCheckBox("Adaptée au nombre d'invités");
+    qcb_equipment = new QCheckBox("Adaptée aux équipements");
     qcb_extend = new QCheckBox("Recherche extensible sur plusieurs jours");
     qcb_available = new QCheckBox("Disponibilité des invités nécessaire");
     qcb_compulsory = new QCheckBox();
 
     fl_data = new QFormLayout;
-    fl_data->addRow("Libellé :", le_label);
-    fl_data->addRow("Début :", dt_begin);
-    fl_data->addRow("Fin :", dt_end);
-    fl_data->addRow("Invité(s) :", widget_guests);
+    fl_data->addRow("Libellé :", le_label);    
     fl_data->addRow("Salle :", cb_room);
     fl_data->addRow("Equipement(s) :", list_equipments);
+    fl_data->addRow("Invité(s) :", widget_guests);
     qgb_frm->setLayout(fl_data);
 
     fl_hour = new QFormLayout;
@@ -174,7 +167,7 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     hbl_room->addStretch();
     hbl_room->addLayout(vbl_room2);
 
-    /** Fieldset de la recherche de crénau **/
+    /** Fieldset de la recherche de créneau **/
     QVBoxLayout *vbl_hour1 = new QVBoxLayout;
     vbl_hour1->addLayout(fl_hour);
     vbl_hour1->addWidget(qcb_extend);
@@ -209,7 +202,7 @@ MeetingActions::MeetingActions(int _action, QWidget *parent, int _id) : QDialog(
     hbl_ob->addWidget(qgb_option);
     hbl_ob->addLayout(layout_buttons);*/
 
-    /** Layout des salles et crénaux **/
+    /** Layout des salles et créneaux **/
     QVBoxLayout *vbl_rh = new QVBoxLayout;
     vbl_rh->addWidget(qgb_room);
     vbl_rh->addWidget(qgb_hour);
@@ -273,7 +266,7 @@ void MeetingActions::findHours () {
                     QMessageBox::information(this, "Résultat de la recherche", text_result);
                 }
                 else {
-                    dt_begin->setDateTime(qdt);
+                    dt_begin2->setDateTime(qdt);
                     dt_end->setDateTime(qdt);
                     dt_end->setTime(QTime(qdt.time().hour() + qte_duration->time().hour(), qdt.time().minute() + qte_duration->time().minute(), 0, 0));
                     QString text_result = "La date du " + qdt.date().toString("dd-MM-yyyy") + " à " + qdt.time().toString("hh:mm") + " est faite pour vous.";
@@ -335,9 +328,13 @@ void MeetingActions::findRoom () {
     }
 
     int id_room = engine->findRoom(list_users_id.size(), guest, list_id_equipment, equipment);
-    cb_room->setCurrentIndex(id_room);
-    QString text_result = "La salle " + cb_room->currentText() + " est faite pour vous.";
-    QMessageBox::information(this, "Résultat de la recherche", text_result);
+    if (id_room) {
+        cb_room->setCurrentIndex(id_room);
+        QString text_result = "La salle " + cb_room->currentText() + " est faite pour vous.";
+        QMessageBox::information(this, "Résultat de la recherche", text_result);
+    }
+    else
+        QMessageBox::warning(this, "Résultat de la recherche", "Aucune salle ne correspond à vos critères de recherche.");
 }
 
 void MeetingActions::makeAction(){
@@ -346,8 +343,6 @@ void MeetingActions::makeAction(){
 
     QString missingFields("");
     if(le_label->text() == "") missingFields += "Libellé ; ";
-    if(dt_begin->text() == "") missingFields += "Horaire début ; ";
-    if(dt_end->text() == "") missingFields += "Horaire fin ; ";
     if(cb_room->currentText() == "Automatique") missingFields += "Salles";
 
     QString periodicity = "0";
@@ -380,7 +375,7 @@ void MeetingActions::makeAction(){
         }
     }
 
-    if (missingFields == "" && engine->verif(dt_begin->dateTime(), dt_end->dateTime(), cb_room->currentIndex(), list_users_id, available, guest) == 1){
+    if (missingFields == "" && engine->verif(dt_begin2->dateTime(), dt_end->dateTime(), cb_room->currentIndex(), list_users_id, available, guest) == 1){
 
         QString state = "0";
         if (qcb_compulsory->isChecked())
@@ -388,7 +383,7 @@ void MeetingActions::makeAction(){
         //Requette retournant toutes les réunions à un jour donné
         QSqlQuery *req = new QSqlQuery();
         req->prepare("INSERT INTO meeting VALUES (null, :room, :begin, :end, :label, :periodicity, :state, :color)");
-        req->bindValue(":begin", dt_begin->dateTime().toString("yyyy-MM-dd hh:mm"));
+        req->bindValue(":begin", dt_begin2->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":end", dt_end->dateTime().toString("yyyy-MM-dd hh:mm"));
         req->bindValue(":label", le_label->text());
         req->bindValue(":room", cb_room->currentIndex());
@@ -441,7 +436,6 @@ void MeetingActions::changeComboBoxEquipment(int index){
 
         QSqlQuery *req = new QSqlQuery();
         req->prepare("SELECT e.equip_id, e.equip_name FROM equipment e INNER JOIN haveequipment he ON e.equip_id = he.equip_id INNER JOIN room r ON r.room_id = he.room_id WHERE r.room_id = :room_id ORDER BY equip_name");
-        qDebug() << list_equipments->itemData(list_equipments->currentIndex()).toInt();
         req->bindValue(":room_id", cb_room->itemData(cb_room->currentIndex()).toInt());
         req->exec();
         while(req->next()){
@@ -461,7 +455,7 @@ void MeetingActions::changeComboBoxEquipment(int index){
             list_equipments->addItem(req->value(1).toString(), false);
         }
     }
-    fl_data->setWidget(5, QFormLayout::FieldRole, list_equipments);
+    fl_data->setWidget(2, QFormLayout::FieldRole, list_equipments);
 }
 
 void MeetingActions::moveCurrentItem(ListWidget *source, ListWidget *target)
